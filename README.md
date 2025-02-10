@@ -29,8 +29,8 @@
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/jaspr-blog.git
-cd jaspr-blog
+git clone https://github.com/tayormi/writesync.git
+cd writesync
 ```
 
 2. Install dependencies:
