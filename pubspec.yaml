@@ -1,0 +1,33 @@
+name: jaspr_blog
+description: A blog engine built with Jaspr that renders markdown files.
+version: 0.0.1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  jaspr: ^0.17.0
+  jaspr_router: ^0.6.1
+  jaspr_riverpod: ^0.3.7
+  markdown: ^7.3.0
+  path: ^1.8.3
+  yaml: ^3.1.2
+  meta: ^1.11.0
+  collection: ^1.18.0
+  js: ^0.6.7
+  intl: ^0.19.0
+
+dev_dependencies:
+  build_runner: ^2.4.0
+  build_web_compilers: ^4.1.0
+  jaspr_builder: ^0.17.0
+  jaspr_lints: ^0.2.0
+  lints: ^3.0.0
+  jaspr_tailwind: ^0.3.1
+
+jaspr:
+  mode: client
+  web:
+    title: Jaspr Blog
+    base: /
+  uses-ssr: true
