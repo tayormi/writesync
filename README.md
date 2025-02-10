@@ -98,6 +98,7 @@ class SiteConfig {
 ## 📝 Adding Blog Posts
 
 1. Create a new markdown file in `web/assets/posts/` directory
+
 2. Add front matter at the top of your markdown file:
 
 ```markdown
@@ -120,6 +121,20 @@ metadata:
 
 Your post content here...
 ```
+
+3. Update the `web/assets/posts/manifest.json` file to include your new post:
+
+```json
+[
+  "your-post-file.md",
+  "advanced_dart_patterns.md",
+  "dart_async_programming.md",
+  "welcome.md"
+  // ... other posts
+]
+```
+
+> **Note**: The manifest.json file is a simple array of markdown filenames. Make sure to add the filename of your new post to this array. The order of posts in the manifest affects their display order, with the first post being featured.
 
 ## 🎨 Customization
 
