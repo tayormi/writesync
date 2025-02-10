@@ -30,24 +30,21 @@ class HomePage extends StatelessComponent {
     // Add SEO meta tags
     yield Document.head(
       title: selectedTag != null
-          ? 'Posts tagged #$selectedTag - Jaspr Blog'
-          : 'Jaspr Blog',
+          ? 'Posts tagged #$selectedTag - ${SiteConfig.siteName}'
+          : SiteConfig.siteName,
       meta: {
-        'description':
-            'Thoughts, stories and ideas about programming and technology',
+        'description': SiteConfig.siteDescription,
         'keywords': allTags.join(', '),
         'og:title': selectedTag != null
-            ? 'Posts tagged #$selectedTag - Jaspr Blog'
-            : 'Jaspr Blog',
-        'og:description':
-            'Thoughts, stories and ideas about programming and technology',
+            ? 'Posts tagged #$selectedTag - ${SiteConfig.siteName}'
+            : SiteConfig.siteName,
+        'og:description': SiteConfig.siteDescription,
         'og:type': 'website',
         'twitter:card': 'summary_large_image',
         'twitter:title': selectedTag != null
-            ? 'Posts tagged #$selectedTag - Jaspr Blog'
-            : 'Jaspr Blog',
-        'twitter:description':
-            'Thoughts, stories and ideas about programming and technology',
+            ? 'Posts tagged #$selectedTag - ${SiteConfig.siteName}'
+            : SiteConfig.siteName,
+        'twitter:description': SiteConfig.siteDescription,
       },
     );
 
