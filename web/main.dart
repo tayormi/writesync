@@ -1,29 +1,7 @@
-// The entrypoint for the **client** environment.
-//
-// This file is compiled to javascript and executed in the browser.
+// This file is used as a source for the main.g.dart generator
+// The actual implementation will be in main.g.dart
 
-// Client-specific jaspr import.
-import 'package:jaspr/browser.dart';
-import 'package:jaspr_riverpod/jaspr_riverpod.dart';
-// Imports the [App] component.
-import 'package:jaspr_blog/app.dart';
-import 'package:jaspr_blog/services/blog_service.dart';
+import 'main.g.dart' as generated;
+export 'main.g.dart';
 
-void main() async {
-  try {
-    print('Initializing blog service...');
-    await BlogService().initialize();
-    print('Blog service initialized');
-
-    print('Starting app...');
-    runApp(
-      ProviderScope(
-        child: const App(),
-      ),
-    );
-    print('App started');
-  } catch (e, stackTrace) {
-    print('Error starting app: $e');
-    print('Stack trace: $stackTrace');
-  }
-}
+void main() => generated.main();

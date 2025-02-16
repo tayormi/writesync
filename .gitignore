@@ -32,3 +32,26 @@ migrate_working_dir/
 # Flutter related
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Dart/Flutter
+.dart_tool/
+.packages
+build/
+pubspec.lock
+
+# Generated files
+*.g.dart
+*.blog.dart
+*.freezed.dart
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
+
+# Dependencies
+.pub-cache/
+.pub/
