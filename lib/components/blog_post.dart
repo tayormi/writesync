@@ -5,7 +5,7 @@ import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../models/blog_post.dart';
 import '../config/site_config.dart';
 import '../providers/theme_provider.dart';
-import 'tag_chip.dart';
+import '../providers/layout_provider.dart';
 
 class BlogPostComponent extends StatefulComponent {
   final BlogPost post;
@@ -114,72 +114,88 @@ class BlogPostCard extends StatelessComponent {
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
+    final currentLayout = context.watch(blogLayoutProvider);
+    final isListView = currentLayout == BlogLayout.list;
+
     yield article(
-      classes:
-          'bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300',
+      classes: '''
+        ${SiteConfig.blogPostCard['container']}
+        ${isListView ? SiteConfig.blogPostCard['listView']!['container'] : ''}
+      ''',
       [
         if (post.imageUrl != null)
-          img(
-            src: post.imageUrl!,
-            classes: 'w-full h-48 object-cover',
-            alt: post.title,
+          div(
+            classes: '''
+              ${SiteConfig.blogPostCard['imageContainer']}
+              ${isListView ? SiteConfig.blogPostCard['listView']!['imageContainer'] : ''} 
+            ''',
+            [
+              img(
+                src: post.imageUrl!,
+                classes: SiteConfig.blogPostCard['image'],
+                alt: post.title,
+              ),
+            ],
           ),
         div(
-          classes: 'p-6',
+          classes: '''
+            ${SiteConfig.blogPostCard['content']}
+            ${isListView ? SiteConfig.blogPostCard['listView']!['content'] : ''}
+          ''',
           [
-            // Tags
-            if (SiteConfig.blogDisplay['showTags']! && post.tags.isNotEmpty)
-              div(
-                classes: 'mb-4 flex flex-wrap gap-2',
-                [
-                  for (final tag in post.tags) TagChip(tag: tag),
-                ],
-              ),
-
-            // Title
-            a(
-              href: post.canonicalUrl,
-              classes: 'block',
+            div(
+              classes: SiteConfig.blogPostCard['contentWrapper'],
               [
-                h2(
-                  classes:
-                      'text-xl font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400',
+                // Title
+                a(
+                  href: post.canonicalUrl,
+                  classes: SiteConfig.blogPostCard['title'],
                   [text(post.title)],
+                ),
+                // Description
+                p(
+                  classes: SiteConfig.blogPostCard['description'],
+                  [text(post.description)],
                 ),
               ],
             ),
-
-            // Description
-            p(
-              classes: 'text-gray-600 dark:text-gray-400 mb-4',
-              [text(post.description)],
-            ),
-
-            // Metadata
-            if (SiteConfig.blogDisplay['showAuthor']! ||
-                SiteConfig.blogDisplay['showDate']!)
+            // Author section
+            if (SiteConfig.blogDisplay['showAuthor'] == true ||
+                SiteConfig.blogDisplay['showAuthorImage'] == true ||
+                SiteConfig.blogDisplay['showDate'] == true)
               div(
-                classes:
-                    'flex items-center justify-between text-sm text-gray-500 dark:text-gray-400',
+                classes: SiteConfig.blogPostCard['authorContainer'],
                 [
-                  // Author
-                  if (SiteConfig.blogDisplay['showAuthor']!)
-                    div(
-                      classes: 'flex items-center',
+                  if (SiteConfig.blogDisplay['showAuthorImage'] == true)
+                    a(
+                      href: '#',
                       [
-                        if (SiteConfig.blogDisplay['showAuthorImage']! &&
-                            post.authorImageUrl != null)
-                          img(
-                            src: post.authorImageUrl!,
-                            classes: 'w-6 h-6 rounded-full mr-2',
-                            alt: post.author,
-                          ),
-                        text(post.author),
+                        img(
+                          src: post.authorImageUrl ??
+                              SiteConfig.defaultAuthorImage,
+                          classes: SiteConfig.blogPostCard['authorImage'],
+                          alt: 'Avatar of ${post.author}',
+                        ),
                       ],
                     ),
-                  // Date
-                  if (SiteConfig.blogDisplay['showDate']!)
-                    text(DateFormat('MMM d, yyyy').format(post.publishedAt)),
+                  div(
+                    classes: SiteConfig.blogPostCard['authorInfo'],
+                    [
+                      if (SiteConfig.blogDisplay['showAuthor'] == true)
+                        a(
+                          href: '#',
+                          classes: SiteConfig.blogPostCard['authorName'],
+                          [text(post.author)],
+                        ),
+                      if (SiteConfig.blogDisplay['showDate'] == true)
+                        p(
+                          classes: SiteConfig.blogPostCard['date'],
+                          [
+                            text(DateFormat('MMM d').format(post.publishedAt)),
+                          ],
+                        ),
+                    ],
+                  ),
                 ],
               ),
           ],

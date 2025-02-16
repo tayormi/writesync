@@ -21,7 +21,8 @@
 - 📝 **Markdown Support** - Write your posts in Markdown
 - 🔍 **Search** - Full-text search functionality
 - 🏷️ **Tags** - Organize posts with tags
-- 📊 **Pagination** - Smart pagination for better UX
+- 📊 **Smart Pagination** - Configurable pagination with multiple display options
+- 🌟 **Featured Posts** - Multiple strategies for featuring posts
 - 🎯 **SEO Optimized** - Dynamic meta tags and structured data
 - 🔄 **Social Integration** - Easy social media sharing
 
@@ -76,8 +77,9 @@ jaspr serve
 
 ## ⚙️ Configuration
 
-All site-wide configurations are managed in a single file: `lib/config/site_config.dart`. Update this file to customize your blog:
+All site-wide configurations are managed in a single file: `lib/config/site_config.dart`. Here are the key configuration areas:
 
+### Basic Configuration
 ```dart
 class SiteConfig {
   // Site Information
@@ -95,9 +97,38 @@ class SiteConfig {
 }
 ```
 
+### Featured Posts Configuration
+```dart
+static const Map<String, dynamic> featuredPost = {
+  'strategy': 'tag',     // Options: 'tag', 'latest', 'manual'
+  'tag': 'featured',     // Tag to use when strategy is 'tag'
+  'manualSlug': '',      // Slug to use when strategy is 'manual'
+  'fallbackToLatest': true, // Use latest post if no featured post found
+};
+```
+
+Featured post strategies:
+- **Tag-based**: Feature posts with a specific tag
+- **Manual Selection**: Feature a specific post by its slug
+- **Latest Post**: Always feature the most recent post
+- **Fallback**: Automatically use latest post if no featured post is found
+
+### Pagination Configuration
+```dart
+// Blog Configuration
+static const int postsPerPage = 6;  // Number of posts per page
+static const bool enablePagination = true;
+```
+
+The pagination system:
+- Excludes featured post from regular pagination
+- Shows configurable number of posts per page
+- Provides clear navigation between pages
+- Maintains layout preference across pages
+
 ## 📝 Adding Blog Posts
 
-1. Create a new markdown file in `web/assets/posts/` directory
+1. Create a new markdown file in `lib/posts/` directory
 
 2. Add front matter at the top of your markdown file:
 
@@ -122,19 +153,10 @@ metadata:
 Your post content here...
 ```
 
-3. Update the `web/assets/posts/manifest.json` file to include your new post:
-
-```json
-[
-  "your-post-file.md",
-  "advanced_dart_patterns.md",
-  "dart_async_programming.md",
-  "welcome.md"
-  // ... other posts
-]
+3. Run the build command to generate the blog post:
+```bash
+dart run build_runner build
 ```
-
-> **Note**: The manifest.json file is a simple array of markdown filenames. Make sure to add the filename of your new post to this array. The order of posts in the manifest affects their display order, with the first post being featured.
 
 ## 🎨 Customization
 

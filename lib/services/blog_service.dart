@@ -1,66 +1,100 @@
-import 'dart:convert';
-import 'dart:html';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../models/blog_post.dart';
-import 'package:yaml/yaml.dart';
+import '../config/site_config.dart';
+import '../services/taxonomy_service.dart';
 
-// Create an AsyncNotifier to handle the blog service state
-class BlogServiceNotifier extends AsyncNotifier<BlogService> {
-  @override
-  Future<BlogService> build() async {
-    final service = BlogService();
-    await service.initialize();
-    return service;
-  }
-}
-
-// Update the provider to use AsyncNotifier
 final blogServiceProvider =
-    AsyncNotifierProvider<BlogServiceNotifier, BlogService>(() {
-  return BlogServiceNotifier();
-});
+    Provider<BlogService>((ref) => BlogService.instance);
 
 class BlogService {
-  final List<BlogPost> _posts = [];
+  static final BlogService instance = BlogService._();
+  BlogService._();
 
-  BlogService();
+  final List<BlogPost> _posts = [];
+  final _taxonomyService = TaxonomyService.instance;
 
   Future<void> initialize() async {
+    print('Initializing BlogService...');
     try {
-      final manifestResponse =
-          await HttpRequest.getString('assets/posts/manifest.json');
-      final List<String> files =
-          (jsonDecode(manifestResponse) as List).cast<String>();
-
-      for (final file in files) {
-        try {
-          final content = await HttpRequest.getString('assets/posts/$file');
-          final post = _parseMarkdown(content);
-          _posts.add(post);
-          print('Loaded post: ${post.title}');
-        } catch (e) {
-          print('Error loading post $file: $e');
+      // Initialize any required resources
+      // In the future, we can add any async initialization here
+      await _initializeBlogPosts();
+      print('Blog posts initialized successfully.');
+      print('Total posts registered: ${_posts.length}');
+      if (_posts.isEmpty) {
+        print('Warning: No blog posts were registered!');
+      } else {
+        print('Registered posts:');
+        for (final post in _posts) {
+          print('- ${post.title} (${post.slug})');
         }
       }
-    } catch (e) {
-      print('Error loading manifest: $e');
-      // Create a demo post as fallback
-      const demoMarkdown = '''
-      # Welcome to my blog
-      This is a demo post.
-      ''';
-
-      final post = _parseMarkdown(demoMarkdown);
-      _posts.add(post);
-      print('Created demo post as fallback');
+    } catch (e, stackTrace) {
+      print('Error initializing blog posts: $e');
+      print('Stack trace: $stackTrace');
     }
   }
 
+  Future<void> _initializeBlogPosts() async {
+    // The registration will be handled by the generated code
+  }
+
+  void registerPost(BlogPost post) {
+    print('Registering post: ${post.title} (${post.slug})');
+    _posts.add(post);
+    _taxonomyService.indexPost(post);
+    // Sort posts by date, newest first
+    _posts.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+  }
+
   List<BlogPost> getAllPosts() {
-    final posts = List<BlogPost>.from(_posts);
-    posts.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
-    print('Returning ${posts.length} posts');
-    return posts;
+    return List.unmodifiable(_posts);
+  }
+
+  List<BlogPost> getPostsByTag(String tag) {
+    return _taxonomyService.getPostsByTag(tag);
+  }
+
+  List<BlogPost> getPostsByAuthor(String author) {
+    return _taxonomyService.getPostsByAuthor(author);
+  }
+
+  List<BlogPost> getPostsByYear(String year) {
+    return _taxonomyService.getPostsByYear(year);
+  }
+
+  List<BlogPost> getPostsByMonth(String month) {
+    return _taxonomyService.getPostsByMonth(month);
+  }
+
+  List<BlogPost> searchPosts(String query) {
+    final lowercaseQuery = query.toLowerCase();
+    return _posts
+        .where((post) =>
+            post.title.toLowerCase().contains(lowercaseQuery) ||
+            post.description.toLowerCase().contains(lowercaseQuery) ||
+            post.content.toLowerCase().contains(lowercaseQuery))
+        .toList();
+  }
+
+  List<String> getAllTags() {
+    return _taxonomyService.getAllTags();
+  }
+
+  List<String> getAllAuthors() {
+    return _taxonomyService.getAllAuthors();
+  }
+
+  List<String> getAllYears() {
+    return _taxonomyService.getAllYears();
+  }
+
+  List<String> getAllMonths() {
+    return _taxonomyService.getAllMonths();
+  }
+
+  Map<String, int> getTagCounts() {
+    return _taxonomyService.getTagCounts();
   }
 
   BlogPost? getPostBySlug(String slug) {
@@ -71,49 +105,68 @@ class BlogService {
     }
   }
 
-  List<BlogPost> searchPosts(String? query) {
-    if (query == null || query.isEmpty) {
-      return getAllPosts();
-    }
-
-    final normalizedQuery = query.toLowerCase();
-    final filteredPosts = _posts.where((post) {
-      return post.title.toLowerCase().contains(normalizedQuery) ||
-          post.description.toLowerCase().contains(normalizedQuery) ||
-          post.tags.any((tag) => tag.toLowerCase().contains(normalizedQuery));
-    }).toList();
-
-    filteredPosts.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
-    return filteredPosts;
+  int getTotalPages() {
+    return (_posts.length / SiteConfig.postsPerPage).ceil();
   }
 
-  BlogPost _parseMarkdown(String content) {
-    print('Parsing markdown content:');
-    print(content);
+  List<BlogPost> getPostsForPage(int page) {
+    final startIndex = (page - 1) * SiteConfig.postsPerPage;
+    final endIndex = startIndex + SiteConfig.postsPerPage;
+    final sortedPosts = List<BlogPost>.from(_posts)
+      ..sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
 
-    final parts = content.split('---');
-    if (parts.length < 3) {
-      throw FormatException('Invalid markdown format: missing frontmatter');
+    if (startIndex >= sortedPosts.length) {
+      return [];
     }
 
-    final yamlContent = parts[1].trim();
-    print('YAML content:');
-    print(yamlContent);
-
-    // Join all parts after the frontmatter and trim whitespace
-    final markdownContent = parts.sublist(2).join('---').trim();
-    print('Markdown content after parsing:');
-    print(markdownContent);
-
-    final frontMatter = loadYaml(yamlContent) as Map;
-    print('Parsed frontmatter:');
-    print(frontMatter);
-
-    return BlogPost.fromMarkdown(
-      markdownContent,
-      Map<String, dynamic>.from(frontMatter),
+    return sortedPosts.sublist(
+      startIndex,
+      endIndex > sortedPosts.length ? sortedPosts.length : endIndex,
     );
   }
 
-  List<BlogPost> get posts => List.unmodifiable(_posts);
+  void clear() {
+    _posts.clear();
+    _taxonomyService.clear();
+  }
+
+  BlogPost getFeaturedPost() {
+    switch (SiteConfig.featuredPost['strategy']) {
+      case 'tag':
+        final tag = SiteConfig.featuredPost['tag'];
+        final taggedPosts = _taxonomyService.getPostsByTag(tag);
+        if (taggedPosts.isNotEmpty) {
+          return taggedPosts.first;
+        }
+        break;
+
+      case 'manual':
+        final slug = SiteConfig.featuredPost['manualSlug'];
+        if (slug.isNotEmpty) {
+          final post = getPostBySlug(slug);
+          if (post != null) {
+            return post;
+          }
+        }
+        break;
+
+      case 'latest':
+      default:
+        if (_posts.isNotEmpty) {
+          return _posts.first;
+        }
+    }
+
+    // Fallback to latest post if enabled and no featured post found
+    if (SiteConfig.featuredPost['fallbackToLatest'] && _posts.isNotEmpty) {
+      return _posts.first;
+    }
+
+    throw Exception('No featured post found and no fallback available');
+  }
+
+  List<BlogPost> getNonFeaturedPosts() {
+    final featuredPost = getFeaturedPost();
+    return _posts.where((post) => post != featuredPost).toList();
+  }
 }

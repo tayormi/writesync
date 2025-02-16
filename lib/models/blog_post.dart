@@ -1,50 +1,18 @@
-import 'package:meta/meta.dart';
+import 'package:jaspr/jaspr.dart';
 
 @immutable
-class BlogPost {
-  final String title;
-  final String slug;
-  final String markdownContent;
-  final DateTime publishedAt;
-  final List<String> tags;
-  final String description;
-  final String author;
-  final String? imageUrl;
-  final String? authorImageUrl;
-  final Map<String, String> metadata;
-  final String content;
-
-  const BlogPost({
-    required this.title,
-    required this.slug,
-    required this.markdownContent,
-    required this.publishedAt,
-    required this.tags,
-    required this.description,
-    required this.author,
-    this.imageUrl,
-    this.authorImageUrl,
-    required this.metadata,
-    required this.content,
-  });
-
-  factory BlogPost.fromMarkdown(
-      String content, Map<String, dynamic> frontMatter) {
-    return BlogPost(
-      title: frontMatter['title'] as String? ?? 'Untitled',
-      slug: frontMatter['slug'] as String? ?? 'untitled',
-      markdownContent: content,
-      publishedAt: DateTime.tryParse(frontMatter['date'] as String? ?? '') ??
-          DateTime.now(),
-      tags: (frontMatter['tags'] as List<dynamic>?)?.cast<String>() ?? [],
-      description: frontMatter['description'] as String? ?? '',
-      author: frontMatter['author'] as String? ?? 'Anonymous',
-      imageUrl: frontMatter['image'] as String?,
-      authorImageUrl: frontMatter['author_image'] as String?,
-      metadata: Map<String, String>.from(frontMatter['metadata'] as Map? ?? {}),
-      content: content,
-    );
-  }
+abstract class BlogPost implements Component {
+  String get title;
+  String get slug;
+  String get markdownContent;
+  DateTime get publishedAt;
+  List<String> get tags;
+  String get description;
+  String get author;
+  String? get imageUrl;
+  String? get authorImageUrl;
+  Map<String, String> get metadata;
+  String get content;
 
   String get metaDescription => description.isEmpty
       ? markdownContent.substring(
@@ -52,4 +20,6 @@ class BlogPost {
       : description;
 
   String get canonicalUrl => '/blog/$slug';
+
+  Component render(BuildContext context);
 }

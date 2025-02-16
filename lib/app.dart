@@ -1,5 +1,6 @@
 import 'dart:html';
 import 'package:jaspr/jaspr.dart';
+import 'package:jaspr_blog/pages/search_page.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'pages/home_page.dart';
@@ -78,6 +79,8 @@ class App extends StatelessComponent {
                 // Router content based on path
                 if (path == '/' || path == '/blog')
                   const HomePage()
+                else if (path == '/search')
+                  const SearchPage()
                 else if (path.startsWith('/blog/'))
                   PostPage(slug: path.substring('/blog/'.length))
                 else
