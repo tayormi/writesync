@@ -656,4 +656,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 If you find WriteSync helpful, please consider giving it a star ⭐️
 
-For issues and feature requests, please use the [GitHub issue tracker](https://github.com/yourusername/jaspr-blog/issues).
+For issues and feature requests, please use the [GitHub issue tracker](https://github.com/tayormi/writesync/issues).
