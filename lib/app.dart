@@ -5,11 +5,11 @@ import 'package:jaspr_router/jaspr_router.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'pages/home_page.dart';
 import 'pages/post_page.dart';
-import 'providers/theme_provider.dart';
-import 'settings/styles.dart';
-import 'providers/search_provider.dart';
 import 'config/site_config.dart';
+import 'services/performance_monitor.dart';
+import 'components/performance_dashboard.dart';
 
+// Define routes for the application
 final routes = [
   Route(
     path: '/',
@@ -18,6 +18,10 @@ final routes = [
   Route(
     path: '/blog/:slug',
     builder: (context, state) => PostPage(slug: state.params['slug'] ?? ''),
+  ),
+  Route(
+    path: '/search',
+    builder: (context, state) => const SearchPage(),
   ),
 ];
 
@@ -34,8 +38,20 @@ class RootApp extends StatelessComponent {
 }
 
 // Main app component with the actual UI
-class App extends StatelessComponent {
+class App extends StatefulComponent {
   const App();
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize performance monitoring
+    context.read(performanceMonitorProvider).initialize();
+  }
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
@@ -48,48 +64,16 @@ class App extends StatelessComponent {
       },
     );
 
-    yield Builder(
-      builder: (context) sync* {
-        final isDark = context.watch(isDarkProvider);
-        final uri = Uri.parse(window.location.href);
-        final path = uri.path;
-        final searchQuery = uri.queryParameters['q'] ?? '';
-
-        // Initialize search query from URL if present
-        if (searchQuery.isNotEmpty) {
-          context.read(searchQueryProvider.notifier).state = searchQuery;
-        }
-
-        // Update HTML element class for dark mode
-        if (isDark) {
-          document.documentElement?.classes.add('dark');
-        } else {
-          document.documentElement?.classes.remove('dark');
-        }
-
-        yield div(
-          classes:
-              'min-h-screen ${AppStyles.getBackground(isDark: isDark)} flex flex-col',
-          [
-            // Main content
-            DomComponent(
-              tag: 'main',
-              classes: 'flex-grow w-full',
-              children: [
-                // Router content based on path
-                if (path == '/' || path == '/blog')
-                  const HomePage()
-                else if (path == '/search')
-                  const SearchPage()
-                else if (path.startsWith('/blog/'))
-                  PostPage(slug: path.substring('/blog/'.length))
-                else
-                  const HomePage(),
-              ],
-            ),
-          ],
-        );
-      },
+    yield div(
+      classes: 'relative',
+      [
+        Router(
+          routes: routes,
+        ),
+        // Add performance dashboard
+        if (SiteConfig.enablePerformanceMonitoring)
+          const PerformanceDashboard(),
+      ],
     );
   }
 }

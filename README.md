@@ -126,6 +126,133 @@ The pagination system:
 - Provides clear navigation between pages
 - Maintains layout preference across pages
 
+### Analytics Configuration
+```dart
+static const Map<String, dynamic> analytics = {
+  'enabled': true,                    // Master switch for analytics
+  'googleAnalytics': {
+    'enabled': true,                  // GA-specific switch
+    'measurementId': 'G-XXXXXXXXXX',  // Your GA4 measurement ID
+    'sendPerformanceMetrics': true,   // Send Web Vitals data
+    'debugMode': false,               // Enable debug logging
+    'customEvents': {
+      'enabled': true,                // Enable custom event tracking
+      'trackPageViews': true,         // Track page views
+      'trackClicks': true,            // Track user interactions
+      'trackErrors': true,            // Track errors
+      'trackNavigation': true,        // Track navigation events
+      'trackSearch': true,            // Track search events
+    },
+    'customDimensions': {
+      'environment': 'production',     // Custom dimensions for all events
+      'version': '1.0.0',
+      'theme': 'auto',
+    },
+  },
+};
+```
+
+The analytics system provides:
+
+1. **Web Vitals Tracking**:
+   - First Contentful Paint (FCP)
+   - Largest Contentful Paint (LCP)
+   - First Input Delay (FID)
+   - Time to Interactive (TTI)
+   - Cumulative Layout Shift (CLS)
+
+2. **Custom Event Tracking**:
+   ```dart
+   final monitor = context.read(performanceMonitorProvider);
+   
+   // Track custom events
+   monitor.trackEvent(
+     'button_click',
+     category: 'UI',
+     label: 'Submit Form',
+     properties: {'form_id': 'contact'},
+   );
+
+   // Track page views
+   monitor.trackPageView(
+     title: 'Home Page',
+     properties: {'section': 'blog'},
+   );
+
+   // Track user interactions
+   monitor.trackInteraction(
+     'button',
+     'click',
+     category: 'Navigation',
+   );
+
+   // Track search events
+   monitor.trackSearch(
+     'dart patterns',
+     resultsCount: 5,
+   );
+
+   // Track errors
+   monitor.trackError(
+     'Failed to load post',
+     type: 'NetworkError',
+     stackTrace: stackTrace,
+   );
+   ```
+
+3. **Enhanced Properties**:
+   - Automatic timestamp tracking
+   - Page URL and title
+   - Custom dimensions
+   - Environment information
+   - User interaction details
+   - Error tracking with stack traces
+
+4. **Debug Mode**:
+   - Console logging of all events
+   - Detailed property inspection
+   - Event validation
+   - Performance monitoring
+
+### Using Analytics
+
+1. **Configuration**:
+   - Update `measurementId` with your GA4 ID
+   - Configure desired tracking options
+   - Set custom dimensions
+   - Enable/disable specific features
+
+2. **Custom Event Tracking**:
+   ```dart
+   final monitor = context.read(performanceMonitorProvider);
+   
+   // Basic event
+   monitor.trackEvent('event_name');
+   
+   // Event with properties
+   monitor.trackEvent(
+     'event_name',
+     properties: {'key': 'value'},
+     category: 'category',
+     label: 'label',
+     value: 1.0,
+   );
+   ```
+
+3. **Automatic Tracking**:
+   - Web Vitals metrics
+   - Page views (optional)
+   - User interactions (optional)
+   - Error events (optional)
+   - Search events (optional)
+
+4. **Debug Mode**:
+   Enable debug mode in configuration:
+   ```dart
+   'debugMode': true,
+   ```
+   This will log all events to the console with detailed information.
+
 ## 📝 Adding Blog Posts
 
 1. Create a new markdown file in `lib/posts/` directory

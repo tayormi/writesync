@@ -8,6 +8,7 @@ import '../components/pagination.dart';
 import '../providers/layout_provider.dart';
 import '../providers/pagination_provider.dart';
 import '../services/blog_service.dart';
+import '../mixins/monitoring_mixin.dart';
 
 class HomePage extends StatefulComponent {
   const HomePage({super.key});
@@ -16,7 +17,34 @@ class HomePage extends StatefulComponent {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with MonitoringMixin<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    _loadPosts();
+  }
+
+  Future<void> _loadPosts() async {
+    await trackOperation('loadPosts', () async {
+      try {
+        final blogService = context.read(blogServiceProvider);
+        final posts = blogService.getAllPosts();
+
+        trackComponentEvent('posts_loaded', properties: {
+          'count': posts.length,
+          'success': true,
+        });
+      } catch (e, stackTrace) {
+        trackComponentError(
+          'Failed to load posts',
+          type: 'LoadError',
+          stackTrace: stackTrace,
+          properties: {'error': e.toString()},
+        );
+      }
+    });
+  }
+
   @override
   Iterable<Component> build(BuildContext context) sync* {
     final blogService = context.watch(blogServiceProvider);
@@ -49,6 +77,14 @@ class _HomePageState extends State<HomePage> {
             remainingPosts.length,
             currentPage,
           );
+
+      // Track page state
+      trackComponentEvent('page_state_updated', properties: {
+        'total_posts': allPosts.length,
+        'current_page': currentPage,
+        'layout': currentLayout.toString(),
+        'featured_post': featuredPost.slug,
+      });
 
       // Calculate pagination for remaining posts
       final startIndex = (currentPage - 1) * postsPerPage;
@@ -101,7 +137,14 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      trackComponentError(
+        'Error rendering home page',
+        type: 'RenderError',
+        stackTrace: stackTrace,
+        properties: {'error': e.toString()},
+      );
+
       yield Layout(
         children: [
           div(
