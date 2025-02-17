@@ -54,7 +54,7 @@ dart pub get
 
 4. Run the development server:
 ```bash
-dart run jaspr serve
+jaspr serve
 ```
 
 ## 🎨 Screenshots
