@@ -20,6 +20,7 @@ dependencies:
   glob: ^2.1.2
   crypto: ^3.0.3
   stream_transform: ^2.1.0
+  nanoid2: ^2.0.1
 
 dev_dependencies:
   build_runner: ^2.4.8

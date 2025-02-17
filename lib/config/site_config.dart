@@ -209,6 +209,35 @@ class SiteConfig {
         'theme': 'auto',
       },
     },
+    'lukehog': {
+      'enabled': true,
+      'projectId': '', // Your Lukehog project ID
+      'options': {
+        'debugMode': false,
+        'automaticPageviews': true,
+        'automaticPerformanceMetrics': true,
+        'automaticErrorTracking': true,
+        'sessionTimeout': 1800, // 30 minutes in seconds
+      },
+    },
+    'customAnalytics': {
+      'enabled': false,
+      'endpoint': '', // Your analytics API endpoint
+      'apiKey': '', // Your API key
+      'options': {
+        'batchSize': 10,
+        'batchIntervalMs': 2000,
+        'retryAttempts': 3,
+        'debugMode': false,
+      },
+      'customEvents': {
+        'enabled': true,
+        'trackPageViews': true,
+        'trackClicks': true,
+        'trackErrors': true,
+        'trackPerformance': true,
+      },
+    },
   };
 
   // Featured Post Configuration
