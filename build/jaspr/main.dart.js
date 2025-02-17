@@ -3585,7 +3585,7 @@ _.Q=_.z=_.y=_.x=_.w=$},
 ww(a,b,c,d){var s,r,q=new A.W($.Q,t.fD),p=new A.ca(q,t.iZ),o=new XMLHttpRequest()
 o.toString
 B.az.mH(o,b,a,!0)
-c.L(0,new A.nP(o))
+if(c!=null)c.L(0,new A.nP(o))
 s=t.sf
 r=t.gK
 A.dj(o,"load",s.a(new A.nQ(o,p)),!1,r)
@@ -15498,8 +15498,8 @@ kW(){var s=window
 s.toString
 A.dj(s,"error",t.nx.a(new A.o4(this)),!1,t.C)},
 c0(a,b){return this.kP(a,t.c.a(b))},
-kP(a,a0){var s=0,r=A.b7(t.H),q,p=2,o,n=this,m,l,k,j,i,h,g,f,e,d,c,b
-var $async$c0=A.b8(function(a1,a2){if(a1===1){o=a2
+kP(a,b){var s=0,r=A.b7(t.H),q,p=2,o,n=this,m,l,k,j,i,h,g,f,e,d,c
+var $async$c0=A.b8(function(a0,a1){if(a0===1){o=a1
 s=p}while(true)switch(s){case 0:if(!n.e||n.a==null){s=1
 break}p=4
 if(n.d!=null){h=Date.now()
@@ -15514,45 +15514,44 @@ n.d=h
 g=window.localStorage
 g.toString
 g.setItem("lukehog-last-sent",h.a8())
-h=t.N
-g=t.z
-m=B.m.d1(A.r(["event",a,"userId",n.b,"sessionId",n.c,"properties",a0,"timestamp",new A.a4(Date.now(),0,!1).mZ().a8(),"debug",!1],h,g),null)
+h=t.z
+m=B.m.d1(A.r(["event",a,"userId",n.b,"sessionId",n.c,"properties",b,"timestamp",new A.a4(Date.now(),0,!1).mZ().a8(),"debug",!1],t.N,h),null)
 l=0
 case 7:if(!!0){s=8
-break}f=l
-if(typeof f!=="number"){q=f.cp()
+break}g=l
+if(typeof g!=="number"){q=g.cp()
 s=1
-break}if(!(f<3)){s=8
+break}if(!(g<3)){s=8
 break}p=10
 s=13
-return A.b3(A.ww("https://api.lukehog.com/event/"+A.q(n.a),"POST",A.r(["Content-Type","application/json"],h,h),m),$async$c0)
-case 13:k=a2
+return A.b3(A.ww("https://api.lukehog.com/event/"+A.q(n.a),"POST",null,m),$async$c0)
+case 13:k=a1
 j=k.status
-f=!1
-if(j!=null){e=j
-if(typeof e!=="number"){q=e.ne()
+g=!1
+if(j!=null){f=j
+if(typeof f!=="number"){q=f.ne()
 s=1
-break}if(e>=200){f=j
-if(typeof f!=="number"){q=f.cp()
+break}if(f>=200){g=j
+if(typeof g!=="number"){q=g.cp()
 s=1
-break}f=f<300}}if(f){s=1
-break}f=new A.jP(k)
-throw A.d(f)
+break}g=g<300}}if(g){s=1
+break}g=new A.jP(k)
+throw A.d(g)
 p=4
 s=12
 break
 case 10:p=9
-c=o
-f=l
-if(typeof f!=="number"){q=f.bp()
+d=o
+g=l
+if(typeof g!=="number"){q=g.bp()
 s=1
-break}l=f+1
-if(J.a8(l,3))throw c
-f=l
-if(typeof f!=="number"){q=A.tn(f)
+break}l=g+1
+if(J.a8(l,3))throw d
+g=l
+if(typeof g!=="number"){q=A.tn(g)
 s=1
 break}s=14
-return A.b3(A.f4(new A.d0(1000*(100*B.d.iR(1,f))),g),$async$c0)
+return A.b3(A.f4(new A.d0(1000*(100*B.d.iR(1,g))),h),$async$c0)
 case 14:s=12
 break
 case 9:s=4
@@ -15563,8 +15562,8 @@ case 8:p=2
 s=6
 break
 case 4:p=3
-b=o
-i=A.T(b)
+c=o
+i=A.T(c)
 A.aZ("Lukehog Analytics: Failed to send event - "+A.q(i))
 s=6
 break
