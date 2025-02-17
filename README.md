@@ -40,14 +40,16 @@ cd writesync
 dart pub get
 ```
 
-3. Configure analytics:
+3. Configure plugins:
    - Visit [Lukehog](https://lukehog.com) to get your project ID
-   - Update `web/env.js`:
-   ```javascript
-   window.env = {
-       LUKEHOG_PROJECT_ID: 'your-project-id',
-       // ... other env variables
-   };
+   - Update `config/plugins/lukehog_analytics.yaml`:
+   ```yaml
+   name: lukehog_analytics
+   enabled: true
+   options:
+     projectId: 'your-lukehog-project-id'
+     debug: false
+     automaticPageviews: true
    ```
 
 4. Run the development server:
@@ -273,9 +275,9 @@ WriteSync supports several types of plugins:
 
 ### Plugin Configuration
 
-Plugins can be configured in two ways:
+Plugins are configured using YAML files in the `config/plugins/` directory:
 
-1. **YAML Configuration** (`config/plugins.yaml`):
+1. **Main Plugin Configuration** (`config/plugins.yaml`):
 ```yaml
 plugins:
   my_plugin:
@@ -285,13 +287,25 @@ plugins:
       key: value
 ```
 
-2. **Environment Variables**:
-```javascript
-// web/env.js
-window.env = {
-    'MY_PLUGIN_API_KEY': 'your-api-key',
-};
+2. **Plugin-Specific Configuration** (`config/plugins/my_plugin.yaml`):
+```yaml
+name: my_plugin
+enabled: true
+development_only: false
+
+options:
+  # Plugin-specific options here
+  apiKey: 'your-api-key'
+  debug: false
+  customOption: 'value'
 ```
+
+This configuration approach provides:
+- Type-safe configuration
+- Environment-aware settings
+- Centralized plugin management
+- Easy development/production switching
+- Better security for sensitive values
 
 ### Plugin Lifecycle
 
