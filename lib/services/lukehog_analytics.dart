@@ -131,9 +131,7 @@ class LukehogAnalytics {
             '$_baseUrl/event/$_projectId',
             method: 'POST',
             sendData: payload,
-            requestHeaders: {
-              'Content-Type': 'application/json',
-            },
+            // Don't send any headers for Lukehog endpoint
           );
 
           final status = request.status;
