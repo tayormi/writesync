@@ -211,7 +211,7 @@ class SiteConfig {
     },
     'lukehog': {
       'enabled': true,
-      'projectId': '', // Your Lukehog project ID
+      'projectId': 'HypnhnNIEIycLTTa', // Your Lukehog project ID
       'options': {
         'debugMode': false,
         'automaticPageviews': true,
