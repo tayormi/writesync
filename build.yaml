@@ -1,0 +1,74 @@
+targets:
+  $default:
+    sources:
+      include:
+        - $package$
+        - lib/**
+        - web/**
+        - config/**
+        - pubspec.yaml
+        - build.yaml
+      exclude:
+        - '**/*.g.dart'
+        - '**/*.blog.dart'
+    builders:
+      writesync|blog_post_builder:
+        enabled: true
+        generate_for:
+          - lib/posts/**.md
+      writesync|main_builder:
+        enabled: true
+        generate_for:
+          - web/main.dart
+      writesync|blog_service_builder:
+        enabled: true
+        generate_for:
+          - lib/services/blog_service.dart
+      build_web_compilers:entrypoint:
+        enabled: true
+        generate_for:
+          - web/main.dart
+        options:
+          compiler: dart2js
+          dart2js_args:
+            - -O4
+            - --csp
+
+builders:
+  blog_post_builder:
+    target: ':blog_post_builder'
+    import: 'package:writesync/builder/blog_post_builder.dart'
+    builder_factories: ['blogPostBuilder']
+    build_extensions:
+      '.md': ['.blog.dart']
+    auto_apply: dependents
+    build_to: source
+    runs_before:
+      - writesync|main_builder
+      - build_web_compilers:entrypoint
+
+  main_builder:
+    target: ':main_builder'
+    import: 'package:writesync/builder/main_builder.dart'
+    builder_factories: ['mainBuilder']
+    build_extensions:
+      '.dart': ['.g.dart']
+    auto_apply: dependents
+    build_to: source
+    required_inputs: ['.blog.dart']
+    runs_before:
+      - build_web_compilers:entrypoint
+
+  blog_service_builder:
+    target: ':blog_service_builder'
+    import: 'package:writesync/builder/blog_service_builder.dart'
+    builder_factories: ['blogServiceBuilder']
+    build_extensions: { '$lib$': ['services/blog_service.g.dart'] }
+    auto_apply: dependents
+    build_to: source
+    required_inputs: ['.blog.dart']
+    runs_before:
+      - build_web_compilers:entrypoint
+    defaults:
+      generate_for:
+        - lib/services/blog_service.dart

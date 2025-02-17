@@ -5,7 +5,8 @@ import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../models/blog_post.dart';
 import '../config/site_config.dart';
 import '../providers/theme_provider.dart';
-import 'tag_chip.dart';
+import '../providers/layout_provider.dart';
+import '../mixins/monitoring_mixin.dart';
 
 class BlogPostComponent extends StatefulComponent {
   final BlogPost post;
@@ -104,7 +105,7 @@ class _BlogPostComponentState extends State<BlogPostComponent> {
   }
 }
 
-class BlogPostCard extends StatelessComponent {
+class BlogPostCard extends StatefulComponent {
   final BlogPost post;
 
   const BlogPostCard({
@@ -113,73 +114,140 @@ class BlogPostCard extends StatelessComponent {
   });
 
   @override
+  State<BlogPostCard> createState() => _BlogPostCardState();
+}
+
+class _BlogPostCardState extends State<BlogPostCard>
+    with MonitoringMixin<BlogPostCard> {
+  void _handlePostClick() {
+    trackComponentInteraction(
+      'post_card',
+      'click',
+      properties: {
+        'post_slug': component.post.slug,
+        'post_title': component.post.title,
+        'post_author': component.post.author,
+        'post_date': component.post.publishedAt.toIso8601String(),
+        'post_tags': component.post.tags,
+        'post_url': component.post.canonicalUrl,
+        'source': 'blog_post_card',
+        'layout': context.read(blogLayoutProvider).toString(),
+      },
+    );
+  }
+
+  @override
   Iterable<Component> build(BuildContext context) sync* {
+    final currentLayout = context.watch(blogLayoutProvider);
+    final isListView = currentLayout == BlogLayout.list;
+
     yield article(
-      classes:
-          'bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300',
+      classes: '''
+        ${SiteConfig.blogPostCard['container']}
+        ${isListView ? SiteConfig.blogPostCard['listView']!['container'] : ''}
+      ''',
       [
-        if (post.imageUrl != null)
-          img(
-            src: post.imageUrl!,
-            classes: 'w-full h-48 object-cover',
-            alt: post.title,
+        if (component.post.imageUrl != null)
+          div(
+            classes: '''
+              ${SiteConfig.blogPostCard['imageContainer']}
+              ${isListView ? SiteConfig.blogPostCard['listView']!['imageContainer'] : ''} 
+            ''',
+            [
+              img(
+                src: component.post.imageUrl!,
+                classes: SiteConfig.blogPostCard['image'],
+                alt: component.post.title,
+              ),
+            ],
           ),
         div(
-          classes: 'p-6',
+          classes: '''
+            ${SiteConfig.blogPostCard['content']}
+            ${isListView ? SiteConfig.blogPostCard['listView']!['content'] : ''}
+          ''',
           [
-            // Tags
-            if (SiteConfig.blogDisplay['showTags']! && post.tags.isNotEmpty)
-              div(
-                classes: 'mb-4 flex flex-wrap gap-2',
-                [
-                  for (final tag in post.tags) TagChip(tag: tag),
-                ],
-              ),
-
-            // Title
-            a(
-              href: post.canonicalUrl,
-              classes: 'block',
+            div(
+              classes: SiteConfig.blogPostCard['contentWrapper'],
               [
-                h2(
-                  classes:
-                      'text-xl font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400',
-                  [text(post.title)],
+                // Title
+                a(
+                  href: component.post.canonicalUrl,
+                  classes: SiteConfig.blogPostCard['title'],
+                  events: {
+                    'click': (event) => _handlePostClick(),
+                  },
+                  [text(component.post.title)],
+                ),
+                // Description
+                p(
+                  classes: SiteConfig.blogPostCard['description'],
+                  [text(component.post.description)],
                 ),
               ],
             ),
-
-            // Description
-            p(
-              classes: 'text-gray-600 dark:text-gray-400 mb-4',
-              [text(post.description)],
-            ),
-
-            // Metadata
-            if (SiteConfig.blogDisplay['showAuthor']! ||
-                SiteConfig.blogDisplay['showDate']!)
+            // Author section
+            if (SiteConfig.blogDisplay['showAuthor'] == true ||
+                SiteConfig.blogDisplay['showAuthorImage'] == true ||
+                SiteConfig.blogDisplay['showDate'] == true)
               div(
-                classes:
-                    'flex items-center justify-between text-sm text-gray-500 dark:text-gray-400',
+                classes: SiteConfig.blogPostCard['authorContainer'],
                 [
-                  // Author
-                  if (SiteConfig.blogDisplay['showAuthor']!)
-                    div(
-                      classes: 'flex items-center',
+                  if (SiteConfig.blogDisplay['showAuthorImage'] == true)
+                    a(
+                      href: '#',
+                      events: {
+                        'click': (event) {
+                          trackComponentInteraction(
+                            'author_image',
+                            'click',
+                            properties: {
+                              'author': component.post.author,
+                              'post_slug': component.post.slug,
+                            },
+                          );
+                        },
+                      },
                       [
-                        if (SiteConfig.blogDisplay['showAuthorImage']! &&
-                            post.authorImageUrl != null)
-                          img(
-                            src: post.authorImageUrl!,
-                            classes: 'w-6 h-6 rounded-full mr-2',
-                            alt: post.author,
-                          ),
-                        text(post.author),
+                        img(
+                          src: component.post.authorImageUrl ??
+                              SiteConfig.defaultAuthorImage,
+                          classes: SiteConfig.blogPostCard['authorImage'],
+                          alt: 'Avatar of ${component.post.author}',
+                        ),
                       ],
                     ),
-                  // Date
-                  if (SiteConfig.blogDisplay['showDate']!)
-                    text(DateFormat('MMM d, yyyy').format(post.publishedAt)),
+                  div(
+                    classes: SiteConfig.blogPostCard['authorInfo'],
+                    [
+                      if (SiteConfig.blogDisplay['showAuthor'] == true)
+                        a(
+                          href: '#',
+                          classes: SiteConfig.blogPostCard['authorName'],
+                          events: {
+                            'click': (event) {
+                              trackComponentInteraction(
+                                'author_name',
+                                'click',
+                                properties: {
+                                  'author': component.post.author,
+                                  'post_slug': component.post.slug,
+                                },
+                              );
+                            },
+                          },
+                          [text(component.post.author)],
+                        ),
+                      if (SiteConfig.blogDisplay['showDate'] == true)
+                        p(
+                          classes: SiteConfig.blogPostCard['date'],
+                          [
+                            text(DateFormat('MMM d')
+                                .format(component.post.publishedAt)),
+                          ],
+                        ),
+                    ],
+                  ),
                 ],
               ),
           ],

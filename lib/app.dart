@@ -1,22 +1,55 @@
 import 'dart:html';
 import 'package:jaspr/jaspr.dart';
+import 'package:writesync/pages/search_page.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'pages/home_page.dart';
 import 'pages/post_page.dart';
-import 'providers/theme_provider.dart';
-import 'settings/styles.dart';
-import 'providers/search_provider.dart';
+import 'pages/about_page.dart';
 import 'config/site_config.dart';
+import 'services/performance_monitor.dart';
+import 'components/performance_dashboard.dart';
+import 'utils/lazy_component.dart';
+import 'plugins/plugin_registry.dart';
+import 'package:writesync_lukehog/writesync_lukehog.dart';
 
+// Define routes for the application
 final routes = [
   Route(
     path: '/',
-    builder: (context, state) => const HomePage(),
+    builder: (context, state) => LazyComponent(
+      loader: () async {
+        await Future.delayed(Duration(milliseconds: 100));
+        return const HomePage();
+      },
+    ),
   ),
   Route(
     path: '/blog/:slug',
-    builder: (context, state) => PostPage(slug: state.params['slug'] ?? ''),
+    builder: (context, state) => LazyComponent(
+      loader: () async {
+        await Future.delayed(Duration(milliseconds: 100));
+        return PostPage(slug: state.params['slug'] ?? '');
+      },
+    ),
+  ),
+  Route(
+    path: '/search',
+    builder: (context, state) => LazyComponent(
+      loader: () async {
+        await Future.delayed(Duration(milliseconds: 100));
+        return const SearchPage();
+      },
+    ),
+  ),
+  Route(
+    path: '/about',
+    builder: (context, state) => LazyComponent(
+      loader: () async {
+        await Future.delayed(Duration(milliseconds: 100));
+        return const AboutPage();
+      },
+    ),
   ),
 ];
 
@@ -33,8 +66,33 @@ class RootApp extends StatelessComponent {
 }
 
 // Main app component with the actual UI
-class App extends StatelessComponent {
+class App extends StatefulComponent {
   const App();
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    // Initialize performance monitoring
+    context.read(performanceMonitorProvider).initialize();
+
+    // Initialize plugins
+    final registry = context.read(pluginRegistryProvider);
+
+    // Register analytics plugins
+    if (SiteConfig.analytics['enabled']) {
+      // Register Lukehog Analytics plugin
+      await registry.registerPlugin(lukehogPlugin.createPlugin());
+    }
+  }
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
@@ -47,46 +105,22 @@ class App extends StatelessComponent {
       },
     );
 
-    yield Builder(
-      builder: (context) sync* {
-        final isDark = context.watch(isDarkProvider);
-        final uri = Uri.parse(window.location.href);
-        final path = uri.path;
-        final searchQuery = uri.queryParameters['q'] ?? '';
-
-        // Initialize search query from URL if present
-        if (searchQuery.isNotEmpty) {
-          context.read(searchQueryProvider.notifier).state = searchQuery;
-        }
-
-        // Update HTML element class for dark mode
-        if (isDark) {
-          document.documentElement?.classes.add('dark');
-        } else {
-          document.documentElement?.classes.remove('dark');
-        }
-
-        yield div(
-          classes:
-              'min-h-screen ${AppStyles.getBackground(isDark: isDark)} flex flex-col',
-          [
-            // Main content
-            DomComponent(
-              tag: 'main',
-              classes: 'flex-grow w-full',
-              children: [
-                // Router content based on path
-                if (path == '/' || path == '/blog')
-                  const HomePage()
-                else if (path.startsWith('/blog/'))
-                  PostPage(slug: path.substring('/blog/'.length))
-                else
-                  const HomePage(),
-              ],
-            ),
-          ],
-        );
-      },
+    yield div(
+      classes: 'relative',
+      [
+        Router(
+          routes: routes,
+        ),
+        // Add performance dashboard with lazy loading
+        if (SiteConfig.enablePerformanceMonitoring)
+          LazyComponent(
+            loader: () async {
+              await Future.delayed(Duration(milliseconds: 300));
+              return const PerformanceDashboard();
+            },
+            placeholder: div(classes: 'hidden', []),
+          ),
+      ],
     );
   }
 }

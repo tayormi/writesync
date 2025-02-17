@@ -1,6 +1,7 @@
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../providers/theme_provider.dart';
+import '../providers/route_provider.dart';
 import '../config/site_config.dart';
 
 class Header extends StatefulComponent {
@@ -19,10 +20,20 @@ class _HeaderState extends State<Header> {
     });
   }
 
+  String _getNavItemClasses(bool isActive, bool isDark) {
+    return [
+      'text-sm font-semibold',
+      isActive
+          ? 'text-brand dark:text-brand-light'
+          : 'text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white',
+    ].join(' ');
+  }
+
   @override
   Iterable<Component> build(BuildContext context) sync* {
     final themeMode = context.watch(themeProvider);
     final isDark = context.watch(isDarkProvider);
+    final currentRoute = context.watch(currentRouteProvider);
 
     yield header(
       classes:
@@ -68,8 +79,10 @@ class _HeaderState extends State<Header> {
                             for (final item in SiteConfig.navigation)
                               a(
                                 href: item['path']!,
-                                classes:
-                                    'text-sm font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white',
+                                classes: _getNavItemClasses(
+                                  currentRoute == item['path'],
+                                  isDark,
+                                ),
                                 [text(item['label']!)],
                               ),
                           ],
@@ -145,8 +158,13 @@ class _HeaderState extends State<Header> {
                         for (final item in SiteConfig.navigation)
                           a(
                             href: item['path']!,
-                            classes:
-                                'block rounded-lg px-3 py-2 text-base font-semibold text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white',
+                            classes: '''
+                              block rounded-lg px-3 py-2 text-base font-semibold
+                              ${_getNavItemClasses(
+                              currentRoute == item['path'],
+                              isDark,
+                            )}
+                            ''',
                             events: {
                               'click': (event) => _toggleMobileMenu(),
                             },

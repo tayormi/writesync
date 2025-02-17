@@ -1,0 +1,21 @@
+plugins:
+  # Analytics Plugins
+  lukehog_analytics:
+    enabled: true
+    config_path: 'plugins/lukehog_analytics.yaml'
+
+    # Override specific options from plugin config
+    options:
+      debug: true # Override debug mode for development
+
+  google_analytics:
+    enabled: false
+    config_path: 'plugins/google_analytics.yaml'
+    options:
+      measurementId: '${GA_MEASUREMENT_ID}'
+
+  # Development Plugins
+  dev_tools:
+    enabled: true
+    development_only: true
+    config_path: 'plugins/dev_tools.yaml'

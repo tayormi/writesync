@@ -1,5 +1,9 @@
 import 'package:jaspr/jaspr.dart';
+import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../models/blog_post.dart';
+import '../providers/layout_provider.dart';
+import '../components/blog_post.dart';
+import '../config/site_config.dart';
 
 class BlogList extends StatelessComponent {
   final List<BlogPost> posts;
@@ -10,6 +14,9 @@ class BlogList extends StatelessComponent {
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
+    final currentLayout = context.watch(blogLayoutProvider);
+    final isListView = currentLayout == BlogLayout.list;
+
     yield div(
       classes: 'py-16 sm:py-24',
       [
@@ -35,103 +42,137 @@ class BlogList extends StatelessComponent {
               ],
             ),
             div(
-              classes:
-                  'mx-auto mt-16 grid max-w-2xl auto-rows-fr grid-cols-1 gap-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3',
+              classes: isListView
+                  ? 'mx-auto mt-16 max-w-4xl space-y-6 w-full'
+                  : 'mx-auto mt-16 grid max-w-2xl auto-rows-fr grid-cols-1 gap-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3',
               [
                 for (final post in posts)
-                  article(
-                    classes:
-                        'relative isolate flex flex-col justify-end overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-80 sm:pt-48 lg:pt-80',
-                    [
-                      img(
-                        src: post.imageUrl ??
-                            'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80',
-                        classes:
-                            'absolute inset-0 -z-10 h-full w-full object-cover',
-                        attributes: {'alt': post.title},
+                  if (isListView)
+                    BlogPostListCard(post: post)
+                  else
+                    BlogPostCard(post: post),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class BlogPostListCard extends StatelessComponent {
+  final BlogPost post;
+
+  const BlogPostListCard({
+    required this.post,
+    super.key,
+  });
+
+  @override
+  Iterable<Component> build(BuildContext context) sync* {
+    yield article(
+      classes: '''
+        flex flex-row bg-white dark:bg-gray-800 rounded-lg overflow-hidden
+        border border-gray-100 dark:border-gray-800
+        hover:border-gray-200 dark:hover:border-gray-700
+        hover:shadow-lg transition-all duration-300
+        w-full
+      ''',
+      [
+        // Left side - Image
+        if (post.imageUrl != null)
+          div(
+            classes: '''
+              w-48 min-w-[12rem] h-48 overflow-hidden
+              flex-shrink-0
+            ''',
+            [
+              img(
+                src: post.imageUrl!,
+                classes: '''
+                  w-full h-full object-cover
+                  hover:scale-105 transition-transform duration-200
+                ''',
+                alt: post.title,
+              ),
+            ],
+          ),
+        // Right side - Content
+        div(
+          classes: '''
+            flex-1 p-6 flex flex-col justify-between
+            min-w-0
+          ''',
+          [
+            div(
+              classes: 'flex-1',
+              [
+                // Tags
+                div(
+                  classes: 'flex flex-wrap gap-2 mb-2',
+                  [
+                    for (final tag in post.tags)
+                      span(
+                        classes: '''
+                          text-xs font-medium px-2 py-1 rounded-full
+                          bg-gray-100 dark:bg-gray-700
+                          text-gray-600 dark:text-gray-300
+                        ''',
+                        [text('#$tag')],
                       ),
-                      div(
-                        classes:
-                            'absolute inset-0 -z-10 bg-gradient-to-t from-gray-900 via-gray-900/40',
-                        [],
-                      ),
-                      div(
-                        classes:
-                            'absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10',
-                        [],
-                      ),
-                      div(
-                        classes:
-                            'flex flex-wrap items-center gap-y-1 overflow-hidden text-sm leading-6 text-gray-300',
-                        [
-                          DomComponent(
-                            tag: 'time',
-                            classes: 'mr-8',
-                            attributes: {
-                              'datetime': post.publishedAt.toIso8601String()
-                            },
-                            children: [
-                              text(post.publishedAt
-                                  .toLocal()
-                                  .toString()
-                                  .split(' ')[0])
-                            ],
-                          ),
-                          div(
-                            classes: 'flex items-center gap-x-4',
-                            [
-                              div(
-                                classes: 'flex items-center gap-x-2',
-                                [
-                                  if (post.authorImageUrl != null &&
-                                      post.authorImageUrl!.isNotEmpty)
-                                    img(
-                                      src: post.authorImageUrl!,
-                                      classes:
-                                          'h-6 w-6 rounded-full bg-white/10',
-                                      attributes: {'alt': post.author},
-                                    ),
-                                  text(post.author),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      h3(
-                        classes:
-                            'mt-3 text-lg font-semibold leading-6 text-white',
-                        [
-                          a(
-                            href: '/blog/${post.slug}',
-                            [
-                              span(
-                                classes: 'absolute inset-0',
-                                [],
-                              ),
-                              text(post.title),
-                            ],
-                          ),
-                        ],
-                      ),
-                      div(
-                        classes: 'flex flex-wrap gap-2 mt-3',
-                        [
-                          for (final tag in post.tags)
-                            span(
-                              classes:
-                                  'inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white',
-                              [text(tag)],
-                            ),
-                        ],
-                      ),
-                      p(
-                        classes:
-                            'mt-2 line-clamp-3 text-sm leading-6 text-gray-300',
-                        [text(post.description)],
-                      ),
-                    ],
+                  ],
+                ),
+                // Title
+                a(
+                  href: post.canonicalUrl,
+                  classes: '''
+                    text-xl font-bold text-gray-900 dark:text-white
+                    hover:text-indigo-600 dark:hover:text-indigo-400
+                    line-clamp-2 mb-2
+                  ''',
+                  [text(post.title)],
+                ),
+                // Description
+                p(
+                  classes: '''
+                    text-gray-600 dark:text-gray-300
+                    line-clamp-2 mb-4
+                  ''',
+                  [text(post.description)],
+                ),
+              ],
+            ),
+            // Author and date
+            div(
+              classes: 'flex items-center',
+              [
+                if (post.authorImageUrl != null)
+                  img(
+                    src: post.authorImageUrl ?? SiteConfig.defaultAuthorImage,
+                    classes: 'w-10 h-10 rounded-full mr-4',
+                    alt: 'Avatar of ${post.author}',
                   ),
+                div(
+                  classes: 'text-sm',
+                  [
+                    p(
+                      classes: '''
+                        font-semibold text-gray-900 dark:text-white
+                        hover:text-indigo-600 dark:hover:text-indigo-400
+                      ''',
+                      [text(post.author)],
+                    ),
+                    p(
+                      classes: 'text-gray-600 dark:text-gray-400',
+                      [
+                        text(post.publishedAt
+                            .toLocal()
+                            .toString()
+                            .split(' ')[0]),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
