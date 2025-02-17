@@ -36,7 +36,6 @@ migrate_working_dir/
 # Dart/Flutter
 .dart_tool/
 .packages
-build/
 pubspec.lock
 
 # Generated files
