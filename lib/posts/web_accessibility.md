@@ -4,7 +4,7 @@ date: 2024-03-18
 author: Alex Thompson
 description: Learn how to create inclusive web applications using Jaspr, ensuring your apps are accessible to all users regardless of their abilities.
 tags: [accessibility, web, jaspr, a11y]
-image: https://images.unsplash.com/photo-1629196914168-3a2652305f8f
+image: https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1
 authorImage: https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d
 ---
 

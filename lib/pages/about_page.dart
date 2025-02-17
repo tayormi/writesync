@@ -8,13 +8,11 @@ class AboutPage extends StatelessComponent {
   @override
   Iterable<Component> build(BuildContext context) sync* {
     yield Layout(
+      withGradient: true,
       children: [
-        // Hero section with gradient background
+        // Hero section
         div(
-          classes: '''
-            relative bg-gradient-to-b from-brand/10 to-transparent 
-            dark:from-brand-dark/10 dark:to-transparent py-20
-          ''',
+          classes: 'py-20',
           [
             div(
               classes: 'container mx-auto px-4',
