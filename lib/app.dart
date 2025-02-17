@@ -5,6 +5,7 @@ import 'package:jaspr_router/jaspr_router.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'pages/home_page.dart';
 import 'pages/post_page.dart';
+import 'pages/about_page.dart';
 import 'config/site_config.dart';
 import 'services/performance_monitor.dart';
 import 'components/performance_dashboard.dart';
@@ -22,6 +23,10 @@ final routes = [
   Route(
     path: '/search',
     builder: (context, state) => const SearchPage(),
+  ),
+  Route(
+    path: '/about',
+    builder: (context, state) => const AboutPage(),
   ),
 ];
 
