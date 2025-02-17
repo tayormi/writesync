@@ -1,15 +1,15 @@
 targets:
   $default:
     builders:
-      jaspr_blog|blog_post_builder:
+      writesync|blog_post_builder:
         enabled: true
         generate_for:
           - lib/posts/**.md
-      jaspr_blog|main_builder:
+      writesync|main_builder:
         enabled: true
         generate_for:
           - web/main.dart
-      jaspr_blog|blog_service_builder:
+      writesync|blog_service_builder:
         enabled: true
         generate_for:
           - lib/services/blog_service.dart
@@ -26,19 +26,19 @@ targets:
 builders:
   blog_post_builder:
     target: ':blog_post_builder'
-    import: 'package:jaspr_blog/builder/blog_post_builder.dart'
+    import: 'package:writesync/builder/blog_post_builder.dart'
     builder_factories: ['blogPostBuilder']
     build_extensions:
       '.md': ['.blog.dart']
     auto_apply: dependents
     build_to: source
     runs_before:
-      - jaspr_blog|main_builder
+      - writesync|main_builder
       - build_web_compilers:entrypoint
 
   main_builder:
     target: ':main_builder'
-    import: 'package:jaspr_blog/builder/main_builder.dart'
+    import: 'package:writesync/builder/main_builder.dart'
     builder_factories: ['mainBuilder']
     build_extensions:
       '.dart': ['.g.dart']
@@ -50,7 +50,7 @@ builders:
 
   blog_service_builder:
     target: ':blog_service_builder'
-    import: 'package:jaspr_blog/builder/blog_service_builder.dart'
+    import: 'package:writesync/builder/blog_service_builder.dart'
     builder_factories: ['blogServiceBuilder']
     build_extensions: { '$lib$': ['services/blog_service.g.dart'] }
     auto_apply: dependents

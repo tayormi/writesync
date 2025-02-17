@@ -1,6 +1,6 @@
 import 'dart:html';
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_blog/pages/search_page.dart';
+import 'package:writesync/pages/search_page.dart';
 import 'package:jaspr_router/jaspr_router.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'pages/home_page.dart';

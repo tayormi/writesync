@@ -33,8 +33,8 @@ class BlogServiceBuilder implements Builder {
     final output = '''
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-import 'package:jaspr_blog/services/blog_service.dart';
-${posts.map((post) => "import 'package:jaspr_blog/posts/${post['filename']}.blog.dart';").join('\n')}
+import 'package:writesync/services/blog_service.dart';
+${posts.map((post) => "import 'package:writesync/posts/${post['filename']}.blog.dart';").join('\n')}
 
 extension BlogServiceInitialization on BlogService {
   Future<void> _initializeBlogPosts() async {

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:jaspr/jaspr.dart';
-import 'package:jaspr_blog/config/site_config.dart';
+import 'package:writesync/config/site_config.dart';
 import '../components/layout.dart';
 import '../services/blog_service.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
