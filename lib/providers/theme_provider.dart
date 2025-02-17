@@ -8,27 +8,55 @@ enum ThemeMode {
 }
 
 class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.light) {
-    // Ensure dark mode is off at initialization
-    document.documentElement?.classes.remove('dark');
+  ThemeNotifier() : super(_loadTheme()) {
+    _updateThemeClass();
+
+    // Listen to system theme changes if in system mode
+    if (state == ThemeMode.system) {
+      final darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      darkModeQuery.addListener((event) {
+        if (state == ThemeMode.system) {
+          _updateThemeClass();
+        }
+      });
+    }
+  }
+
+  static ThemeMode _loadTheme() {
+    final savedTheme = window.localStorage['theme'];
+    if (savedTheme != null) {
+      return ThemeMode.values.firstWhere(
+        (mode) => mode.toString() == savedTheme,
+        orElse: () => ThemeMode.system,
+      );
+    }
+    return ThemeMode.system;
+  }
+
+  void _saveTheme(ThemeMode mode) {
+    window.localStorage['theme'] = mode.toString();
   }
 
   bool get isDark {
     if (state == ThemeMode.system) {
-      // Check if system is in dark mode using window.matchMedia
       final darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
       return darkModeQuery.matches;
     }
     return state == ThemeMode.dark;
   }
 
-  void setTheme(ThemeMode mode) {
-    state = mode;
+  void _updateThemeClass() {
     if (isDark) {
       document.documentElement?.classes.add('dark');
     } else {
       document.documentElement?.classes.remove('dark');
     }
+  }
+
+  void setTheme(ThemeMode mode) {
+    state = mode;
+    _saveTheme(mode);
+    _updateThemeClass();
   }
 
   void toggleTheme() {
@@ -38,13 +66,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
     } else {
       state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     }
-
-    // Update dark mode class based on new state
-    if (state == ThemeMode.dark) {
-      document.documentElement?.classes.add('dark');
-    } else {
-      document.documentElement?.classes.remove('dark');
-    }
+    _saveTheme(state);
+    _updateThemeClass();
   }
 }
 

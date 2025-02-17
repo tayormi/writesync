@@ -81,66 +81,191 @@ class PostPage extends StatelessComponent {
           ],
         )
       ]),
-      article(
-        classes: 'container mx-auto px-4 py-8',
-        [
-          // Header section with post metadata
-          header(
-            classes: 'mb-8',
-            [
-              h1(
-                classes:
-                    'text-4xl font-bold mb-4 text-gray-900 dark:text-white',
-                [text(post.title)],
-              ),
-              div(
-                classes:
-                    'flex items-center space-x-4 text-gray-600 dark:text-gray-400',
-                [
-                  if (post.authorImageUrl != null)
-                    img(
-                      classes: 'w-10 h-10 rounded-full',
-                      src: post.authorImageUrl!,
-                      attributes: {'alt': post.author},
-                    ),
-                  div(
-                    classes: 'flex flex-col',
-                    [
-                      span(classes: 'font-medium', [text(post.author)]),
-                      span(classes: 'text-sm', [
-                        text(post.publishedAt
-                            .toLocal()
-                            .toString()
-                            .split(' ')[0]),
-                      ]),
-                    ],
-                  ),
-                ],
-              ),
-              div(
-                classes: 'flex flex-wrap gap-2 mt-4',
-                [
-                  for (final tag in post.tags)
-                    span(
-                      classes:
-                          'px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm text-gray-700 dark:text-gray-300',
-                      [text('#$tag')],
-                    ),
-                ],
-              ),
-              if (post.imageUrl != null)
+      if (post.imageUrl != null)
+        div(
+          classes: '''
+              relative w-full h-[40vh] min-h-[300px] max-h-[500px]
+              overflow-hidden bg-gray-900
+            ''',
+          [
+            // Hero image
+            img(
+              src: post.imageUrl!,
+              classes: '''
+                  absolute inset-0 w-full h-full
+                  object-cover opacity-60
+                ''',
+              attributes: {'alt': post.title},
+            ),
+            // Gradient overlay
+            div(
+              classes: '''
+                  absolute inset-0
+                  bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent
+                ''',
+              [],
+            ),
+            // Title and metadata container
+            div(
+              classes: '''
+                  absolute inset-x-0 bottom-0
+                  container mx-auto px-4 sm:px-6 lg:px-8 pb-12
+                ''',
+              [
                 div(
-                  classes: 'mt-6',
+                  classes: 'max-w-3xl mx-auto',
                   [
-                    img(
-                      classes: 'w-full h-64 object-cover rounded-lg',
-                      src: post.imageUrl!,
-                      attributes: {'alt': post.title},
+                    // Tags
+                    div(
+                      classes: 'flex flex-wrap gap-2 mb-4',
+                      [
+                        for (final tag in post.tags)
+                          span(
+                            classes: '''
+                                px-3 py-1 text-sm font-medium rounded-full
+                                bg-brand/20 text-brand-light
+                                dark:bg-brand-dark/20 dark:text-brand-light
+                              ''',
+                            [text('#$tag')],
+                          ),
+                      ],
+                    ),
+                    // Title
+                    h1(
+                      classes: '''
+                          text-4xl sm:text-5xl font-bold text-white
+                          tracking-tight leading-tight mb-4
+                        ''',
+                      [text(post.title)],
+                    ),
+                    // Author and date
+                    div(
+                      classes: 'flex items-center gap-4 text-gray-300',
+                      [
+                        if (post.authorImageUrl != null)
+                          img(
+                            classes:
+                                'w-10 h-10 rounded-full border-2 border-white/20',
+                            src: post.authorImageUrl!,
+                            attributes: {'alt': post.author},
+                          ),
+                        div(
+                          classes:
+                              'flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4',
+                          [
+                            span(
+                              classes: 'font-medium',
+                              [text(post.author)],
+                            ),
+                            span(
+                              classes: 'text-gray-400',
+                              [text('·')],
+                            ),
+                            DomComponent(
+                              tag: 'time',
+                              classes: 'text-sm',
+                              attributes: {
+                                'datetime': post.publishedAt.toIso8601String(),
+                              },
+                              children: [
+                                text(post.publishedAt
+                                    .toLocal()
+                                    .toString()
+                                    .split(' ')[0]),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
-            ],
-          ),
+              ],
+            ),
+          ],
+        )
+      else
+        // Simple header without hero image
+        div(
+          classes:
+              'bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800',
+          [
+            div(
+              classes: 'container mx-auto px-4 sm:px-6 lg:px-8 py-12',
+              [
+                div(
+                  classes: 'max-w-3xl mx-auto',
+                  [
+                    // Tags
+                    div(
+                      classes: 'flex flex-wrap gap-2 mb-4',
+                      [
+                        for (final tag in post.tags)
+                          span(
+                            classes: '''
+                                px-3 py-1 text-sm font-medium rounded-full
+                                bg-brand/10 text-brand
+                                dark:bg-brand-dark/10 dark:text-brand-light
+                              ''',
+                            [text('#$tag')],
+                          ),
+                      ],
+                    ),
+                    // Title
+                    h1(
+                      classes: '''
+                          text-4xl sm:text-5xl font-bold
+                          text-gray-900 dark:text-white
+                          tracking-tight leading-tight mb-4
+                        ''',
+                      [text(post.title)],
+                    ),
+                    // Author and date
+                    div(
+                      classes:
+                          'flex items-center gap-4 text-gray-600 dark:text-gray-400',
+                      [
+                        if (post.authorImageUrl != null)
+                          img(
+                            classes: 'w-10 h-10 rounded-full',
+                            src: post.authorImageUrl!,
+                            attributes: {'alt': post.author},
+                          ),
+                        div(
+                          classes:
+                              'flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4',
+                          [
+                            span(
+                              classes: 'font-medium',
+                              [text(post.author)],
+                            ),
+                            span(classes: 'hidden sm:inline', [text('·')]),
+                            DomComponent(
+                              tag: 'time',
+                              classes: 'text-sm',
+                              attributes: {
+                                'datetime': post.publishedAt.toIso8601String(),
+                              },
+                              children: [
+                                text(post.publishedAt
+                                    .toLocal()
+                                    .toString()
+                                    .split(' ')[0]),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      article(
+        classes: 'container mx-auto px-4 py-8',
+        [
           // Post content
           div(
             classes:

@@ -4,7 +4,7 @@ date: 2024-03-15
 author: Sarah Chen
 description: A comprehensive guide to implementing machine learning algorithms in Dart, from basic neural networks to advanced AI concepts.
 tags: [AI, machine learning, dart, neural networks]
-image: https://images.unsplash.com/photo-1677442136019-21780ecad095
+image: https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1
 authorImage: https://images.unsplash.com/photo-1580489944761-15a19d654956
 ---
 
