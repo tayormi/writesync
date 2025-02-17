@@ -1,5 +1,16 @@
 targets:
   $default:
+    sources:
+      include:
+        - $package$
+        - lib/**
+        - web/**
+        - config/**
+        - pubspec.yaml
+        - build.yaml
+      exclude:
+        - '**/*.g.dart'
+        - '**/*.blog.dart'
     builders:
       writesync|blog_post_builder:
         enabled: true

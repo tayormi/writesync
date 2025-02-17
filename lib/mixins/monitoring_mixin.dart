@@ -2,11 +2,12 @@ import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../config/site_config.dart';
 import '../services/services.dart';
+import '../plugins/plugin_interface.dart';
+import '../plugins/plugin_registry.dart';
 
 mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
   PerformanceMonitor? _monitor;
-  CustomAnalytics? _customAnalytics;
-  LukehogAnalytics? _lukehogAnalytics;
+  PluginRegistry? _pluginRegistry;
   String get _componentName => T.toString();
 
   @override
@@ -14,8 +15,7 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
     super.initState();
     if (SiteConfig.enablePerformanceMonitoring) {
       _monitor = context.read(performanceMonitorProvider);
-      _customAnalytics = context.read(customAnalyticsProvider);
-      _lukehogAnalytics = context.read(lukehogAnalyticsProvider);
+      _pluginRegistry = context.read(pluginRegistryProvider);
       _trackComponentMount();
     }
   }
@@ -35,7 +35,7 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       ...?properties,
     };
 
-    // Track with GA4
+    // Track with performance monitor
     _monitor?.trackEvent(
       'component_event',
       category: 'Component',
@@ -43,18 +43,14 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       properties: eventProperties,
     );
 
-    // Track with custom analytics
-    _customAnalytics?.trackEvent(AnalyticsEvent(
-      name: 'component_event',
-      category: 'Component',
-      properties: eventProperties,
-    ));
-
-    // Track with Lukehog
-    _lukehogAnalytics?.trackEvent(
-      'component_event',
-      properties: eventProperties,
-    );
+    // Track with analytics plugins
+    for (final plugin
+        in _pluginRegistry?.getPluginsOfType<AnalyticsPlugin>() ?? []) {
+      plugin.trackEvent(
+        'component_event',
+        properties: eventProperties,
+      );
+    }
   }
 
   void trackComponentError(
@@ -71,7 +67,7 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       ...?properties,
     };
 
-    // Track with GA4
+    // Track with performance monitor
     _monitor?.trackError(
       error,
       type: type ?? 'ComponentError',
@@ -79,19 +75,16 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       properties: errorProperties,
     );
 
-    // Track with custom analytics
-    _customAnalytics?.trackError(
-      error,
-      type: type,
-      stackTrace: stackTrace,
-      properties: errorProperties,
-    );
-
-    // Track with Lukehog
-    _lukehogAnalytics?.trackEvent(
-      'error',
-      properties: errorProperties,
-    );
+    // Track with analytics plugins
+    for (final plugin
+        in _pluginRegistry?.getPluginsOfType<AnalyticsPlugin>() ?? []) {
+      plugin.trackError(
+        error,
+        type: type,
+        stackTrace: stackTrace,
+        properties: errorProperties,
+      );
+    }
   }
 
   void trackComponentInteraction(
@@ -106,7 +99,7 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       ...?properties,
     };
 
-    // Track with GA4
+    // Track with performance monitor
     _monitor?.trackInteraction(
       element,
       action,
@@ -114,17 +107,14 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       properties: properties,
     );
 
-    // Track with custom analytics
-    _customAnalytics?.trackClick(
-      element,
-      properties: interactionProperties,
-    );
-
-    // Track with Lukehog
-    _lukehogAnalytics?.trackEvent(
-      'interaction',
-      properties: interactionProperties,
-    );
+    // Track with analytics plugins
+    for (final plugin
+        in _pluginRegistry?.getPluginsOfType<AnalyticsPlugin>() ?? []) {
+      plugin.trackEvent(
+        'interaction',
+        properties: interactionProperties,
+      );
+    }
   }
 
   void _trackComponentMount() {
@@ -134,7 +124,7 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       'action': 'mount',
     };
 
-    // Track with GA4
+    // Track with performance monitor
     _monitor?.trackEvent(
       'component_lifecycle',
       category: 'Component',
@@ -142,18 +132,14 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       properties: mountProperties,
     );
 
-    // Track with custom analytics
-    _customAnalytics?.trackEvent(AnalyticsEvent(
-      name: 'component_lifecycle',
-      category: 'Component',
-      properties: mountProperties,
-    ));
-
-    // Track with Lukehog
-    _lukehogAnalytics?.trackEvent(
-      'component_lifecycle',
-      properties: mountProperties,
-    );
+    // Track with analytics plugins
+    for (final plugin
+        in _pluginRegistry?.getPluginsOfType<AnalyticsPlugin>() ?? []) {
+      plugin.trackEvent(
+        'component_lifecycle',
+        properties: mountProperties,
+      );
+    }
   }
 
   void _trackComponentUnmount() {
@@ -163,7 +149,7 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       'action': 'unmount',
     };
 
-    // Track with GA4
+    // Track with performance monitor
     _monitor?.trackEvent(
       'component_lifecycle',
       category: 'Component',
@@ -171,18 +157,14 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
       properties: unmountProperties,
     );
 
-    // Track with custom analytics
-    _customAnalytics?.trackEvent(AnalyticsEvent(
-      name: 'component_lifecycle',
-      category: 'Component',
-      properties: unmountProperties,
-    ));
-
-    // Track with Lukehog
-    _lukehogAnalytics?.trackEvent(
-      'component_lifecycle',
-      properties: unmountProperties,
-    );
+    // Track with analytics plugins
+    for (final plugin
+        in _pluginRegistry?.getPluginsOfType<AnalyticsPlugin>() ?? []) {
+      plugin.trackEvent(
+        'component_lifecycle',
+        properties: unmountProperties,
+      );
+    }
   }
 
   Future<T> trackOperation<T>(
@@ -206,18 +188,14 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
         'success': true,
       };
 
-      // Track with custom analytics
-      _customAnalytics?.trackPerformance(
-        '$_componentName.$name',
-        durationMs,
-        properties: successProperties,
-      );
-
-      // Track with Lukehog
-      _lukehogAnalytics?.trackEvent(
-        'operation',
-        properties: successProperties,
-      );
+      // Track with analytics plugins
+      for (final plugin
+          in _pluginRegistry?.getPluginsOfType<AnalyticsPlugin>() ?? []) {
+        plugin.trackEvent(
+          'operation',
+          properties: successProperties,
+        );
+      }
 
       return result;
     } catch (e, stackTrace) {
@@ -232,18 +210,14 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
         'stackTrace': stackTrace.toString(),
       };
 
-      // Track with custom analytics
-      _customAnalytics?.trackPerformance(
-        '$_componentName.$name',
-        durationMs,
-        properties: errorProperties,
-      );
-
-      // Track with Lukehog
-      _lukehogAnalytics?.trackEvent(
-        'operation',
-        properties: errorProperties,
-      );
+      // Track with analytics plugins
+      for (final plugin
+          in _pluginRegistry?.getPluginsOfType<AnalyticsPlugin>() ?? []) {
+        plugin.trackEvent(
+          'operation',
+          properties: errorProperties,
+        );
+      }
 
       rethrow;
     }

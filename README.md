@@ -25,6 +25,7 @@
 - 🌟 **Featured Posts** - Multiple strategies for featuring posts
 - 🎯 **SEO Optimized** - Dynamic meta tags and structured data
 - 🔄 **Social Integration** - Easy social media sharing
+- 📈 **Analytics Integration** - Built-in support for Lukehog Analytics
 
 ## 🚀 Quick Start
 
@@ -39,9 +40,19 @@ cd writesync
 dart pub get
 ```
 
-3. Run the development server:
+3. Configure analytics:
+   - Visit [Lukehog](https://lukehog.com) to get your project ID
+   - Update `web/env.js`:
+   ```javascript
+   window.env = {
+       LUKEHOG_PROJECT_ID: 'your-project-id',
+       // ... other env variables
+   };
+   ```
+
+4. Run the development server:
 ```bash
-jaspr serve
+dart run jaspr serve
 ```
 
 ## 🎨 Screenshots
@@ -74,6 +85,282 @@ jaspr serve
   </div>
   <p style="margin-top: 8px; font-style: italic; color: #666;">Responsive design optimized for mobile devices</p>
 </div>
+
+## 📊 Analytics Configuration
+
+WriteSync comes with built-in support for Lukehog Analytics, providing seamless event tracking and user analytics.
+
+### Features
+- 🔄 Automatic page view tracking
+- 🐛 Automatic error tracking
+- 👤 User session management
+- 📊 Event batching and retry logic
+- 🎯 Configurable event filtering
+
+### Configuration
+
+Configure analytics in `config/plugins/lukehog_analytics.yaml`:
+
+```yaml
+name: lukehog_analytics
+enabled: true
+development_only: false
+
+options:
+  projectId: '${LUKEHOG_PROJECT_ID}'
+  debug: false
+  automaticPageviews: true
+  automaticErrorTracking: true
+  sessionExpiration: 1800  # 30 minutes in seconds
+
+events:
+  pageView:
+    enabled: true
+    properties:
+      - url
+      - title
+      - referrer
+      - deviceType
+      - browserInfo
+
+  error:
+    enabled: true
+    properties:
+      - message
+      - stackTrace
+      - errorType
+      - url
+
+  interaction:
+    enabled: true
+    properties:
+      - elementId
+      - elementType
+      - action
+      - value
+
+retry:
+  maxAttempts: 3
+  initialDelay: 1000
+  maxDelay: 5000
+
+batch:
+  enabled: true
+  maxSize: 10
+  flushInterval: 30000
+
+storage:
+  prefix: 'lh_'
+  maxItems: 1000
+  maxAge: 604800
+```
+
+### Usage in Components
+
+Track events in your components using the `MonitoringMixin`:
+
+```dart
+class MyComponent extends StatefulComponent {
+  @override
+  State<MyComponent> createState() => _MyComponentState();
+}
+
+class _MyComponentState extends State<MyComponent> with MonitoringMixin {
+  void _handleClick() {
+    trackComponentInteraction(
+      'button',
+      'click',
+      properties: {'action': 'submit'},
+    );
+  }
+
+  Future<void> _loadData() async {
+    await trackOperation(
+      'loadData',
+      () async {
+        // Your async operation here
+      },
+    );
+  }
+}
+```
+
+## 🔌 Plugin System
+
+WriteSync features a powerful plugin system that allows you to extend functionality. Here's how to install and configure plugins:
+
+### Installing a Plugin
+
+1. Add the plugin to your `pubspec.yaml`:
+```yaml
+dependencies:
+  writesync_lukehog:
+    path: plugins/writesync_lukehog  # For local plugins
+    # or
+    git:
+      url: https://github.com/yourusername/writesync-lukehog.git  # For git-hosted plugins
+```
+
+2. Create plugin configuration in `config/plugins/`:
+```yaml
+# config/plugins/your_plugin.yaml
+name: your_plugin
+enabled: true
+development_only: false  # Set to true for development-only plugins
+
+options:
+  # Plugin-specific options here
+  key: value
+```
+
+3. Register the plugin in your app:
+```dart
+import 'package:writesync_plugin/writesync_plugin.dart';
+
+void main() {
+  // Register the plugin
+  final registry = context.read(pluginRegistryProvider);
+  await registry.registerPlugin(YourPlugin());
+  
+  // Run your app
+  runApp(const App());
+}
+```
+
+### Plugin Types
+
+WriteSync supports several types of plugins:
+
+1. **Analytics Plugins**
+   ```dart
+   class CustomAnalyticsPlugin extends AnalyticsPlugin {
+     @override
+     void trackEvent(String name, {Map<String, dynamic>? properties}) {
+       // Implementation
+     }
+   }
+   ```
+
+2. **Content Processor Plugins**
+   ```dart
+   class CustomProcessorPlugin extends ContentProcessorPlugin {
+     @override
+     Future<String> processMarkdown(String content) async {
+       // Implementation
+     }
+   }
+   ```
+
+3. **Asset Processor Plugins**
+   ```dart
+   class CustomAssetPlugin extends AssetProcessorPlugin {
+     @override
+     Future<List<int>> processAsset(String path, List<int> content) async {
+       // Implementation
+     }
+   }
+   ```
+
+4. **Search Plugins**
+   ```dart
+   class CustomSearchPlugin extends SearchPlugin {
+     @override
+     Future<List<String>> search(String query) async {
+       // Implementation
+     }
+   }
+   ```
+
+### Plugin Configuration
+
+Plugins can be configured in two ways:
+
+1. **YAML Configuration** (`config/plugins.yaml`):
+```yaml
+plugins:
+  my_plugin:
+    enabled: true
+    config_path: 'plugins/my_plugin.yaml'
+    options:
+      key: value
+```
+
+2. **Environment Variables**:
+```javascript
+// web/env.js
+window.env = {
+    'MY_PLUGIN_API_KEY': 'your-api-key',
+};
+```
+
+### Plugin Lifecycle
+
+Plugins follow a lifecycle that you can hook into:
+
+```dart
+class MyPlugin extends WriteSyncPlugin {
+  @override
+  Future<void> initialize(PluginContext context) async {
+    // Called when the plugin is registered
+  }
+
+  @override
+  Future<void> onBeforeBuild() async {
+    // Called before the build process starts
+  }
+
+  @override
+  Future<void> onAfterBuild() async {
+    // Called after the build process completes
+  }
+
+  @override
+  Future<void> dispose() async {
+    // Called when the plugin is being disposed
+  }
+}
+```
+
+### Plugin Best Practices
+
+1. **Configuration Validation**
+   ```dart
+   class MyPluginSchema extends PluginSchema {
+     @override
+     List<PluginOptionSchema> get options => [
+       PluginOptionSchema(
+         name: 'apiKey',
+         type: String,
+         required: true,
+         validators: [
+           PatternValidator(
+             pattern: RegExp(r'^[A-Za-z0-9_-]+$'),
+             message: 'Invalid API key format',
+           ),
+         ],
+       ),
+     ];
+   }
+   ```
+
+2. **Error Handling**
+   ```dart
+   try {
+     // Plugin operations
+   } catch (e) {
+     throw PluginException('Operation failed', e);
+   }
+   ```
+
+3. **Resource Management**
+   ```dart
+   @override
+   Future<void> dispose() async {
+     // Clean up resources
+     await _client?.close();
+     _cache.clear();
+   }
+   ```
 
 ## ⚙️ Configuration
 
