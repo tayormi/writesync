@@ -10,6 +10,8 @@ import 'config/site_config.dart';
 import 'services/performance_monitor.dart';
 import 'components/performance_dashboard.dart';
 import 'utils/lazy_component.dart';
+import 'plugins/plugin_registry.dart';
+import 'package:writesync_lukehog/writesync_lukehog.dart';
 
 // Define routes for the application
 final routes = [
@@ -75,8 +77,21 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
     // Initialize performance monitoring
     context.read(performanceMonitorProvider).initialize();
+
+    // Initialize plugins
+    final registry = context.read(pluginRegistryProvider);
+
+    // Register analytics plugins
+    if (SiteConfig.analytics['enabled']) {
+      // Register Lukehog Analytics plugin
+      await registry.registerPlugin(lukehogPlugin.createPlugin());
+    }
   }
 
   @override

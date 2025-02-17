@@ -1,0 +1,24 @@
+name: writesync_lukehog
+description: Lukehog analytics integration for WriteSync
+version: 1.0.0
+homepage: https://github.com/yourusername/writesync-lukehog
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  writesync:
+    path: ../../ # For local development
+  nanoid2: ^2.0.1
+  meta: ^1.11.0
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0
+
+# Plugin metadata
+writesync:
+  plugin:
+    type: analytics
+    entrypoint: lib/writesync_lukehog.dart
+    config: config/default.yaml
