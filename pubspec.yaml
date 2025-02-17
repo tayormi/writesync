@@ -39,3 +39,7 @@ jaspr:
     title: Jaspr Blog
     base: /
   uses-ssr: true
+  tailwind:
+    source: web/styles.tw.css
+    output: web/styles.css
+    config: tailwind.config.js
