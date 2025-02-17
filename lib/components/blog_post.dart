@@ -126,6 +126,12 @@ class _BlogPostCardState extends State<BlogPostCard>
       properties: {
         'post_slug': component.post.slug,
         'post_title': component.post.title,
+        'post_author': component.post.author,
+        'post_date': component.post.publishedAt.toIso8601String(),
+        'post_tags': component.post.tags,
+        'post_url': component.post.canonicalUrl,
+        'source': 'blog_post_card',
+        'layout': context.read(blogLayoutProvider).toString(),
       },
     );
   }
