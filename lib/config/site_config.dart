@@ -181,10 +181,35 @@ class SiteConfig {
   static const bool enableTags = true;
   static const bool enablePagination = true;
   static const bool enableSocialSharing = true;
+  static const bool enablePerformanceMonitoring = true;
 
   // Cache Configuration
   static const Duration postCacheDuration = Duration(hours: 1);
   static const int maxCachedPosts = 100;
+
+  // Analytics Configuration
+  static const Map<String, dynamic> analytics = {
+    'enabled': true,
+    'googleAnalytics': {
+      'enabled': true,
+      'measurementId': 'G-XXXXXXXXXX', // Replace with your GA4 measurement ID
+      'sendPerformanceMetrics': true,
+      'debugMode': false,
+      'customEvents': {
+        'enabled': true,
+        'trackPageViews': true,
+        'trackClicks': true,
+        'trackErrors': true,
+        'trackNavigation': true,
+        'trackSearch': true,
+      },
+      'customDimensions': {
+        'environment': 'production',
+        'version': '1.0.0',
+        'theme': 'auto',
+      },
+    },
+  };
 
   // Featured Post Configuration
   static const Map<String, dynamic> featuredPost = {

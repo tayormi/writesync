@@ -6,6 +6,7 @@ import '../models/blog_post.dart';
 import '../config/site_config.dart';
 import '../providers/theme_provider.dart';
 import '../providers/layout_provider.dart';
+import '../mixins/monitoring_mixin.dart';
 
 class BlogPostComponent extends StatefulComponent {
   final BlogPost post;
@@ -104,13 +105,30 @@ class _BlogPostComponentState extends State<BlogPostComponent> {
   }
 }
 
-class BlogPostCard extends StatelessComponent {
+class BlogPostCard extends StatefulComponent {
   final BlogPost post;
 
   const BlogPostCard({
     required this.post,
     super.key,
   });
+
+  @override
+  State<BlogPostCard> createState() => _BlogPostCardState();
+}
+
+class _BlogPostCardState extends State<BlogPostCard>
+    with MonitoringMixin<BlogPostCard> {
+  void _handlePostClick() {
+    trackComponentInteraction(
+      'post_card',
+      'click',
+      properties: {
+        'post_slug': component.post.slug,
+        'post_title': component.post.title,
+      },
+    );
+  }
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
@@ -123,7 +141,7 @@ class BlogPostCard extends StatelessComponent {
         ${isListView ? SiteConfig.blogPostCard['listView']!['container'] : ''}
       ''',
       [
-        if (post.imageUrl != null)
+        if (component.post.imageUrl != null)
           div(
             classes: '''
               ${SiteConfig.blogPostCard['imageContainer']}
@@ -131,9 +149,9 @@ class BlogPostCard extends StatelessComponent {
             ''',
             [
               img(
-                src: post.imageUrl!,
+                src: component.post.imageUrl!,
                 classes: SiteConfig.blogPostCard['image'],
-                alt: post.title,
+                alt: component.post.title,
               ),
             ],
           ),
@@ -148,14 +166,17 @@ class BlogPostCard extends StatelessComponent {
               [
                 // Title
                 a(
-                  href: post.canonicalUrl,
+                  href: component.post.canonicalUrl,
                   classes: SiteConfig.blogPostCard['title'],
-                  [text(post.title)],
+                  events: {
+                    'click': (event) => _handlePostClick(),
+                  },
+                  [text(component.post.title)],
                 ),
                 // Description
                 p(
                   classes: SiteConfig.blogPostCard['description'],
-                  [text(post.description)],
+                  [text(component.post.description)],
                 ),
               ],
             ),
@@ -169,12 +190,24 @@ class BlogPostCard extends StatelessComponent {
                   if (SiteConfig.blogDisplay['showAuthorImage'] == true)
                     a(
                       href: '#',
+                      events: {
+                        'click': (event) {
+                          trackComponentInteraction(
+                            'author_image',
+                            'click',
+                            properties: {
+                              'author': component.post.author,
+                              'post_slug': component.post.slug,
+                            },
+                          );
+                        },
+                      },
                       [
                         img(
-                          src: post.authorImageUrl ??
+                          src: component.post.authorImageUrl ??
                               SiteConfig.defaultAuthorImage,
                           classes: SiteConfig.blogPostCard['authorImage'],
-                          alt: 'Avatar of ${post.author}',
+                          alt: 'Avatar of ${component.post.author}',
                         ),
                       ],
                     ),
@@ -185,13 +218,26 @@ class BlogPostCard extends StatelessComponent {
                         a(
                           href: '#',
                           classes: SiteConfig.blogPostCard['authorName'],
-                          [text(post.author)],
+                          events: {
+                            'click': (event) {
+                              trackComponentInteraction(
+                                'author_name',
+                                'click',
+                                properties: {
+                                  'author': component.post.author,
+                                  'post_slug': component.post.slug,
+                                },
+                              );
+                            },
+                          },
+                          [text(component.post.author)],
                         ),
                       if (SiteConfig.blogDisplay['showDate'] == true)
                         p(
                           classes: SiteConfig.blogPostCard['date'],
                           [
-                            text(DateFormat('MMM d').format(post.publishedAt)),
+                            text(DateFormat('MMM d')
+                                .format(component.post.publishedAt)),
                           ],
                         ),
                     ],
