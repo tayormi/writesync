@@ -1,4 +1,4 @@
-name: jaspr_blog
+name: writesync
 description: A blog engine built with Jaspr that renders markdown files.
 version: 0.0.1
 

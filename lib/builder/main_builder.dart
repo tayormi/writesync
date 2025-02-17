@@ -30,12 +30,12 @@ class MainBuilder implements build.Builder {
 
 import 'package:jaspr/browser.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
-import 'package:jaspr_blog/app.dart';
-import 'package:jaspr_blog/services/blog_service.dart';
-import 'package:jaspr_blog/posts/blog_post_registry.dart';
+import 'package:writesync/app.dart';
+import 'package:writesync/services/blog_service.dart';
+import 'package:writesync/posts/blog_post_registry.dart';
 
 // Import all blog posts
-${blogPosts.asMap().entries.map((e) => "import 'package:jaspr_blog/posts/${e.value}.blog.dart' deferred as post${e.key + 1};").join('\n')}
+${blogPosts.asMap().entries.map((e) => "import 'package:writesync/posts/${e.value}.blog.dart' deferred as post${e.key + 1};").join('\n')}
 
 void main() async {
   // Load and register all blog posts
