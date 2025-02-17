@@ -38,8 +38,8 @@ class SearchBar extends StatelessComponent {
             ),
           ],
         ),
-        DomComponent(
-          tag: 'input',
+        input(
+          [],
           classes:
               'block w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm placeholder:text-gray-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-500',
           attributes: {

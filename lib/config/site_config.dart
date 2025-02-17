@@ -2,7 +2,7 @@ class SiteConfig {
   // Site Information
   static const String siteName = 'WriteSync';
   static const String siteDescription =
-      'WriteSync is a platform for writing and sharing your thoughts.';
+      'WriteSync is a blog engine built with Dart and Jaspr.';
   static const String siteAuthor = 'Your Name';
   static const String siteKeywords = 'your, keywords, here';
   static const String siteLogo = '/images/logo.png';
@@ -151,9 +151,9 @@ class SiteConfig {
 
   // Social Media Links
   static const Map<String, String> socialLinks = {
-    'twitter': 'https://twitter.com/yourusername',
-    'github': 'https://github.com/yourusername',
-    'linkedin': 'https://linkedin.com/in/yourusername',
+    'twitter': 'https://twitter.com/write_sync',
+    'github': 'https://github.com/tayormi/writesync',
+    'linkedin': 'https://linkedin.com/in/writesync',
   };
 
   // Blog Configuration
