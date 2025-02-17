@@ -1,0 +1,57 @@
+name: lukehog_analytics
+enabled: true
+development_only: false
+
+# Plugin-specific options
+options:
+  projectId: '${LUKEHOG_PROJECT_ID}'
+  debug: false
+  automaticPageviews: true
+  automaticErrorTracking: true
+  sessionExpiration: 1800 # 30 minutes in seconds
+
+# Additional plugin-specific settings
+events:
+  # Custom event mappings
+  pageView:
+    enabled: true
+    properties:
+      - url
+      - title
+      - referrer
+      - deviceType
+      - browserInfo
+
+  error:
+    enabled: true
+    properties:
+      - message
+      - stackTrace
+      - errorType
+      - url
+
+  interaction:
+    enabled: true
+    properties:
+      - elementId
+      - elementType
+      - action
+      - value
+
+# Retry configuration
+retry:
+  maxAttempts: 3
+  initialDelay: 1000 # milliseconds
+  maxDelay: 5000 # milliseconds
+
+# Batch configuration
+batch:
+  enabled: true
+  maxSize: 10
+  flushInterval: 30000 # milliseconds
+
+# Storage configuration
+storage:
+  prefix: 'lh_'
+  maxItems: 1000
+  maxAge: 604800 # 7 days in seconds
