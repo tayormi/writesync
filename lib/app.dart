@@ -9,24 +9,45 @@ import 'pages/about_page.dart';
 import 'config/site_config.dart';
 import 'services/performance_monitor.dart';
 import 'components/performance_dashboard.dart';
+import 'utils/lazy_component.dart';
 
 // Define routes for the application
 final routes = [
   Route(
     path: '/',
-    builder: (context, state) => const HomePage(),
+    builder: (context, state) => LazyComponent(
+      loader: () async {
+        await Future.delayed(Duration(milliseconds: 100));
+        return const HomePage();
+      },
+    ),
   ),
   Route(
     path: '/blog/:slug',
-    builder: (context, state) => PostPage(slug: state.params['slug'] ?? ''),
+    builder: (context, state) => LazyComponent(
+      loader: () async {
+        await Future.delayed(Duration(milliseconds: 100));
+        return PostPage(slug: state.params['slug'] ?? '');
+      },
+    ),
   ),
   Route(
     path: '/search',
-    builder: (context, state) => const SearchPage(),
+    builder: (context, state) => LazyComponent(
+      loader: () async {
+        await Future.delayed(Duration(milliseconds: 100));
+        return const SearchPage();
+      },
+    ),
   ),
   Route(
     path: '/about',
-    builder: (context, state) => const AboutPage(),
+    builder: (context, state) => LazyComponent(
+      loader: () async {
+        await Future.delayed(Duration(milliseconds: 100));
+        return const AboutPage();
+      },
+    ),
   ),
 ];
 
@@ -75,9 +96,15 @@ class _AppState extends State<App> {
         Router(
           routes: routes,
         ),
-        // Add performance dashboard
+        // Add performance dashboard with lazy loading
         if (SiteConfig.enablePerformanceMonitoring)
-          const PerformanceDashboard(),
+          LazyComponent(
+            loader: () async {
+              await Future.delayed(Duration(milliseconds: 300));
+              return const PerformanceDashboard();
+            },
+            placeholder: div(classes: 'hidden', []),
+          ),
       ],
     );
   }
