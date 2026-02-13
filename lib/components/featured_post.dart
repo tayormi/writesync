@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../models/blog_post.dart';
@@ -10,10 +11,10 @@ class FeaturedPost extends StatelessComponent {
   const FeaturedPost({required this.post});
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final isDark = context.watch(isDarkProvider);
 
-    yield div(
+    return div(
       classes: '',
       [
         // Section header
@@ -29,7 +30,7 @@ class FeaturedPost extends StatelessComponent {
                 ),
                 h2(
                   classes: 'text-lg font-bold text-gray-900 dark:text-white',
-                  [text('Featured Article')],
+                  [Component.text('Featured Article')],
                 ),
               ],
             ),
@@ -85,7 +86,7 @@ class FeaturedPost extends StatelessComponent {
                               ${SiteConfig.getPrimaryLightClasses(isDark: isDark)}
                               transition-colors duration-200
                             ''',
-                            [text(tag)],
+                            [Component.text(tag)],
                           ),
                       ],
                     ),
@@ -98,7 +99,7 @@ class FeaturedPost extends StatelessComponent {
                       group-hover:text-brand dark:group-hover:text-brand-light
                       transition-colors duration-200 line-clamp-2
                     ''',
-                    [text(post.title)],
+                    [Component.text(post.title)],
                   ),
 
                   // Description
@@ -107,7 +108,7 @@ class FeaturedPost extends StatelessComponent {
                       text-base text-gray-600 dark:text-gray-400 
                       mb-4 line-clamp-2
                     ''',
-                    [text(post.description)],
+                    [Component.text(post.description)],
                   ),
                 ]),
                 div([
@@ -135,9 +136,9 @@ class FeaturedPost extends StatelessComponent {
                                   group-hover:text-brand dark:group-hover:text-brand-light
                                   transition-colors duration-200
                                 ''',
-                                [text(post.author)],
+                                [Component.text(post.author)],
                               ),
-                              DomComponent(
+                              Component.element(
                                 tag: 'time',
                                 classes:
                                     'text-sm text-gray-500 dark:text-gray-400',
@@ -145,7 +146,7 @@ class FeaturedPost extends StatelessComponent {
                                   'datetime': post.publishedAt.toIso8601String()
                                 },
                                 children: [
-                                  text(post.publishedAt
+                                  Component.text(post.publishedAt
                                       .toLocal()
                                       .toString()
                                       .split(' ')[0])
@@ -164,8 +165,8 @@ class FeaturedPost extends StatelessComponent {
                           group-hover:translate-x-1
                         ''',
                         [
-                          text('Read article'),
-                          DomComponent(
+                          Component.text('Read article'),
+                          Component.element(
                             tag: 'svg',
                             classes: 'ml-1.5 h-4 w-4',
                             attributes: {
@@ -173,7 +174,7 @@ class FeaturedPost extends StatelessComponent {
                               'fill': 'currentColor',
                             },
                             children: [
-                              DomComponent(
+                              Component.element(
                                 tag: 'path',
                                 attributes: {
                                   'fill-rule': 'evenodd',

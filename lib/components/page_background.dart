@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
 class PageBackground extends StatelessComponent {
@@ -10,8 +11,8 @@ class PageBackground extends StatelessComponent {
   });
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield div(
+  Component build(BuildContext context) {
+    return div(
       classes: withGradient
           ? '''
             relative min-h-screen

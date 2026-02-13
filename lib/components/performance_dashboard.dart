@@ -1,5 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:jaspr_riverpod/legacy.dart';
 import '../services/performance_monitor.dart';
 import 'dart:convert';
 import 'dart:html' show AnchorElement, document;
@@ -120,12 +124,12 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final metrics = context.watch(metricsProvider);
     final history = context.watch(historicalMetricsProvider);
     final isMinimized = context.watch(isMinimizedProvider);
 
-    yield div(
+    return div(
       classes: '''
         fixed ${isMinimized ? 'bottom-4 right-4 w-auto' : 'bottom-4 right-4 w-96 max-w-full'}
         transition-all duration-300 ease-in-out
@@ -146,7 +150,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                   h3(
                     classes:
                         'text-lg font-semibold text-gray-900 dark:text-white',
-                    [text('Performance Metrics')],
+                    [Component.text('Performance Metrics')],
                   ),
                 div(
                   classes: 'flex items-center gap-2',
@@ -160,7 +164,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                         events: {
                           'click': (event) => _exportMetrics(),
                         },
-                        [text('Export')],
+                        [Component.text('Export')],
                       ),
                       button(
                         classes: '''
@@ -175,7 +179,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                                 .state = {};
                           },
                         },
-                        [text('Reset')],
+                        [Component.text('Reset')],
                       ),
                     ],
                     button(
@@ -190,7 +194,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                         },
                       },
                       [
-                        text(isMinimized ? 'Expand' : 'Minimize'),
+                        Component.text(isMinimized ? 'Expand' : 'Minimize'),
                       ],
                     ),
                   ],
@@ -207,7 +211,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                     p(
                       classes:
                           'text-gray-500 dark:text-gray-400 text-center py-4',
-                      [text('Collecting metrics...')],
+                      [Component.text('Collecting metrics...')],
                     )
                   else
                     for (final metric in metrics)
@@ -222,14 +226,14 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                               span(
                                 classes:
                                     'font-medium text-gray-900 dark:text-white',
-                                [text(metric.name)],
+                                [Component.text(metric.name)],
                               ),
                               span(
                                 classes: '''
                                   px-2 py-1 text-xs font-medium rounded-full
                                   ${_getColorForRating(metric.rating)}
                                 ''',
-                                [text(metric.rating)],
+                                [Component.text(metric.rating)],
                               ),
                             ],
                           ),
@@ -239,8 +243,8 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                                 'flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-1',
                             [
                               div([
-                                text('Current: '),
-                                text(
+                                Component.text('Current: '),
+                                Component.text(
                                   metric.name == 'CLS'
                                       ? metric.value.toStringAsFixed(3)
                                       : '${metric.value.toStringAsFixed(0)}ms',
@@ -248,8 +252,8 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                               ]),
                               if (history.containsKey(metric.name))
                                 div([
-                                  text('Avg: '),
-                                  text(_getAverageValue(
+                                  Component.text('Avg: '),
+                                  Component.text(_getAverageValue(
                                       metric.name, history[metric.name]!)),
                                 ]),
                             ],
@@ -257,7 +261,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
                           // Metric Description
                           p(
                             classes: 'text-xs text-gray-500 dark:text-gray-400',
-                            [text(_getMetricDescription(metric.name))],
+                            [Component.text(_getMetricDescription(metric.name))],
                           ),
                         ],
                       ),

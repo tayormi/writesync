@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../components/blog_post.dart';
@@ -46,25 +47,26 @@ class _HomePageState extends State<HomePage> with MonitoringMixin<HomePage> {
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final blogService = context.watch(blogServiceProvider);
     final allPosts = blogService.getAllPosts();
     final currentPage = context.watch(currentPageProvider);
     final currentLayout = context.watch(blogLayoutProvider);
 
+    final children = <Component>[];
     if (allPosts.isEmpty) {
-      yield Layout(
+      children.add(Layout(
         children: [
           div(
             classes: 'container mx-auto px-4 py-8 text-center',
             [
-              text(
+              Component.text(
                   'No blog posts available. Please make sure your markdown files are properly built and registered.'),
             ],
           ),
         ],
-      );
-      return;
+      ));
+      return Component.fragment(children);
     }
 
     try {
@@ -98,7 +100,7 @@ class _HomePageState extends State<HomePage> with MonitoringMixin<HomePage> {
             )
           : <dynamic>[];
 
-      yield Layout(
+      children.add(Layout(
         children: [
           div(
             classes: 'container mx-auto px-4 py-8',
@@ -115,7 +117,7 @@ class _HomePageState extends State<HomePage> with MonitoringMixin<HomePage> {
                 [
                   h1(
                     classes: 'text-3xl font-bold text-gray-900 dark:text-white',
-                    [text('Latest Posts')],
+                    [Component.text('Latest Posts')],
                   ),
                   const LayoutToggle(),
                 ],
@@ -136,7 +138,7 @@ class _HomePageState extends State<HomePage> with MonitoringMixin<HomePage> {
             ],
           ),
         ],
-      );
+      ));
     } catch (e, stackTrace) {
       trackComponentError(
         'Error rendering home page',
@@ -144,17 +146,17 @@ class _HomePageState extends State<HomePage> with MonitoringMixin<HomePage> {
         stackTrace: stackTrace,
         properties: {'error': e.toString()},
       );
-
-      yield Layout(
+      children.add(Layout(
         children: [
           div(
             classes: 'container mx-auto px-4 py-8 text-center',
             [
-              text('Error: $e'),
+              Component.text('Error: $e'),
             ],
           ),
         ],
-      );
+      ));
     }
+    return Component.fragment(children);
   }
 }

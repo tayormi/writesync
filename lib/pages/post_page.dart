@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:writesync/config/site_config.dart';
 import '../components/layout.dart';
@@ -12,25 +13,26 @@ class PostPage extends StatelessComponent {
   const PostPage({required this.slug});
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final blogService = context.read(blogServiceProvider);
     final post = blogService.getPostBySlug(slug);
 
+    final children = <Component>[];
     if (post == null) {
-      yield Layout(children: [
+      children.add(Layout(children: [
         div(
           classes: 'container mx-auto px-4 py-8',
           [
-            h1(classes: 'text-3xl font-bold', [text('Post not found')]),
+            h1(classes: 'text-3xl font-bold', [Component.text('Post not found')]),
             p(classes: 'mt-4', [
-              text('The post you are looking for does not exist.'),
+              Component.text('The post you are looking for does not exist.'),
             ]),
           ],
         ),
-      ]);
-      return;
+      ]));
+      return Component.fragment(children);
     }
-    yield Document.head(
+    children.add(Document.head(
       title: '${post.title} - ${SiteConfig.siteName}',
       meta: {
         'description': post.metaDescription,
@@ -48,15 +50,15 @@ class PostPage extends StatelessComponent {
         'article:author': post.author,
         'article:tag': post.tags.join(','),
       },
-    );
+    ));
 
-    yield Layout(children: [
+    children.add(Layout(children: [
       // Add JSON-LD structured data
       div(classes: 'hidden', [
         div(
           attributes: {'type': 'application/ld+json'},
           [
-            text(jsonEncode({
+            Component.text(jsonEncode({
               '@context': 'https://schema.org',
               '@type': 'BlogPosting',
               'headline': post.title,
@@ -126,7 +128,7 @@ class PostPage extends StatelessComponent {
                                 bg-brand/20 text-brand-light
                                 dark:bg-brand-dark/20 dark:text-brand-light
                               ''',
-                            [text('#$tag')],
+                            [Component.text('#$tag')],
                           ),
                       ],
                     ),
@@ -136,7 +138,7 @@ class PostPage extends StatelessComponent {
                           text-4xl sm:text-5xl font-bold text-white
                           tracking-tight leading-tight mb-4
                         ''',
-                      [text(post.title)],
+                      [Component.text(post.title)],
                     ),
                     // Author and date
                     div(
@@ -155,20 +157,20 @@ class PostPage extends StatelessComponent {
                           [
                             span(
                               classes: 'font-medium',
-                              [text(post.author)],
+                              [Component.text(post.author)],
                             ),
                             span(
                               classes: 'text-gray-400',
-                              [text('·')],
+                              [Component.text('·')],
                             ),
-                            DomComponent(
+                            Component.element(
                               tag: 'time',
                               classes: 'text-sm',
                               attributes: {
                                 'datetime': post.publishedAt.toIso8601String(),
                               },
                               children: [
-                                text(post.publishedAt
+                                Component.text(post.publishedAt
                                     .toLocal()
                                     .toString()
                                     .split(' ')[0]),
@@ -207,7 +209,7 @@ class PostPage extends StatelessComponent {
                                 bg-brand/10 text-brand
                                 dark:bg-brand-dark/10 dark:text-brand-light
                               ''',
-                            [text('#$tag')],
+                            [Component.text('#$tag')],
                           ),
                       ],
                     ),
@@ -218,7 +220,7 @@ class PostPage extends StatelessComponent {
                           text-gray-900 dark:text-white
                           tracking-tight leading-tight mb-4
                         ''',
-                      [text(post.title)],
+                      [Component.text(post.title)],
                     ),
                     // Author and date
                     div(
@@ -237,17 +239,17 @@ class PostPage extends StatelessComponent {
                           [
                             span(
                               classes: 'font-medium',
-                              [text(post.author)],
+                              [Component.text(post.author)],
                             ),
-                            span(classes: 'hidden sm:inline', [text('·')]),
-                            DomComponent(
+                            span(classes: 'hidden sm:inline', [Component.text('·')]),
+                            Component.element(
                               tag: 'time',
                               classes: 'text-sm',
                               attributes: {
                                 'datetime': post.publishedAt.toIso8601String(),
                               },
                               children: [
-                                text(post.publishedAt
+                                Component.text(post.publishedAt
                                     .toLocal()
                                     .toString()
                                     .split(' ')[0]),
@@ -274,7 +276,8 @@ class PostPage extends StatelessComponent {
           ),
         ],
       ),
-    ]);
+    ]));
+    return Component.fragment(children);
   }
 
   List<Component> _renderContent(String content) {
@@ -472,7 +475,7 @@ class PostPage extends StatelessComponent {
           ),
           if (caption != null)
             p(classes: 'mt-2 text-center text-sm text-gray-500 italic', [
-              text(caption),
+              Component.text(caption),
             ]),
         ]);
       }
@@ -490,7 +493,7 @@ class PostPage extends StatelessComponent {
         final height = heightMatch?.group(1) ?? '315';
 
         return div(classes: 'my-8 relative aspect-video', [
-          DomComponent(
+          Component.element(
             tag: 'iframe',
             attributes: {
               'src': src,
@@ -514,12 +517,12 @@ class PostPage extends StatelessComponent {
           [
             for (var i = 0; i < parts.length; i++)
               if (i % 2 == 0)
-                text(_stripHtmlTags(parts[i]))
+                Component.text(_stripHtmlTags(parts[i]))
               else
                 code(
                   classes:
                       'px-1.5 py-0.5 mx-0.5 text-sm font-mono bg-gray-100 dark:bg-gray-800 rounded',
-                  [text(_stripHtmlTags(parts[i]))],
+                  [Component.text(_stripHtmlTags(parts[i]))],
                 ),
           ]);
     }
@@ -535,7 +538,7 @@ class PostPage extends StatelessComponent {
         final style = styleMatch.group(1) ?? '';
         return div(
           attributes: {'style': style},
-          [text(content)],
+          [Component.text(content)],
         );
       }
     }
@@ -549,10 +552,10 @@ class PostPage extends StatelessComponent {
 
       if (summaryMatch != null && contentMatch != null) {
         return details([
-          summary([text(_stripHtmlTags(summaryMatch.group(1) ?? ''))]),
+          summary([Component.text(_stripHtmlTags(summaryMatch.group(1) ?? ''))]),
           p(
               classes: 'p-4',
-              [text(_stripHtmlTags(contentMatch.group(1) ?? ''))]),
+              [Component.text(_stripHtmlTags(contentMatch.group(1) ?? ''))]),
         ]);
       }
     }
@@ -563,13 +566,13 @@ class PostPage extends StatelessComponent {
       return p(classes: 'my-4', [
         for (var i = 0; i < parts.length; i++)
           if (i % 2 == 0)
-            text(parts[i])
+            Component.text(parts[i])
           else
-            DomComponent(
+            Component.element(
               tag: 'kbd',
               classes:
                   'px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg',
-              children: [text(parts[i])],
+              children: [Component.text(parts[i])],
             ),
       ]);
     }
@@ -582,10 +585,10 @@ class PostPage extends StatelessComponent {
         final title = abbrMatch.group(1) ?? '';
         final content = abbrMatch.group(2) ?? '';
         return p(classes: 'my-4', [
-          DomComponent(
+          Component.element(
             tag: 'abbr',
             attributes: {'title': title},
-            children: [text(content)],
+            children: [Component.text(content)],
           ),
         ]);
       }
@@ -596,21 +599,21 @@ class PostPage extends StatelessComponent {
       return h1(
           classes: 'text-2xl font-bold mt-8 mb-4 text-gray-900 dark:text-white',
           [
-            text(_stripHtmlTags(trimmed)),
+            Component.text(_stripHtmlTags(trimmed)),
           ]);
     }
     if (trimmed.startsWith('<h2')) {
       return h2(
           classes: 'text-xl font-bold mt-8 mb-4 text-gray-900 dark:text-white',
           [
-            text(_stripHtmlTags(trimmed)),
+            Component.text(_stripHtmlTags(trimmed)),
           ]);
     }
     if (trimmed.startsWith('<h3')) {
       return h3(
           classes: 'text-lg font-bold mt-6 mb-3 text-gray-900 dark:text-white',
           [
-            text(_stripHtmlTags(trimmed)),
+            Component.text(_stripHtmlTags(trimmed)),
           ]);
     }
     if (trimmed.startsWith('<h4')) {
@@ -618,7 +621,7 @@ class PostPage extends StatelessComponent {
           classes:
               'text-base font-bold mt-6 mb-3 text-gray-900 dark:text-white',
           [
-            text(_stripHtmlTags(trimmed)),
+            Component.text(_stripHtmlTags(trimmed)),
           ]);
     }
 
@@ -627,7 +630,7 @@ class PostPage extends StatelessComponent {
       return blockquote(
           classes:
               'pl-4 my-6 border-l-2 border-gray-200 dark:border-gray-700 italic text-gray-600 dark:text-gray-400',
-          [text(_stripHtmlTags(trimmed))]);
+          [Component.text(_stripHtmlTags(trimmed))]);
     }
 
     // Handle horizontal rules
@@ -648,12 +651,12 @@ class PostPage extends StatelessComponent {
       if (trimmed.startsWith('<ul')) {
         return ul(classes: 'list-disc $listClasses', [
           for (final item in items)
-            li(classes: 'pl-2', [text(_stripHtmlTags(item))]),
+            li(classes: 'pl-2', [Component.text(_stripHtmlTags(item))]),
         ]);
       } else {
         return ol(classes: 'list-decimal $listClasses', [
           for (final item in items)
-            li(classes: 'pl-2', [text(_stripHtmlTags(item))]),
+            li(classes: 'pl-2', [Component.text(_stripHtmlTags(item))]),
         ]);
       }
     }
@@ -670,7 +673,7 @@ class PostPage extends StatelessComponent {
               RegExp(r'<pre><code[^>]*>\n?'), '') // Remove opening tags
           .replaceFirst(RegExp(r'\n?</code></pre>$'), '') // Remove closing tags
           .split('\n') // Split into lines
-          .map((line) => _unescapeHtml(line)) // Unescape each line
+          .map((codeLine) => _unescapeHtml(codeLine)) // Unescape each line
           .join('\n'); // Rejoin with newlines
 
       return div(
@@ -689,7 +692,7 @@ class PostPage extends StatelessComponent {
                     span(
                       classes:
                           'text-xs font-medium text-gray-600 dark:text-gray-400',
-                      [text(language)],
+                      [Component.text(language)],
                     )
                   else
                     span(classes: '', []), // Empty span to maintain flex layout
@@ -713,7 +716,7 @@ class PostPage extends StatelessComponent {
                     },
                     [
                       // Copy icon
-                      DomComponent(
+                      Component.element(
                         tag: 'svg',
                         classes: 'w-4 h-4',
                         attributes: {
@@ -722,7 +725,7 @@ class PostPage extends StatelessComponent {
                           'viewBox': '0 0 24 24',
                         },
                         children: [
-                          DomComponent(
+                          Component.element(
                             tag: 'path',
                             attributes: {
                               'd':
@@ -734,7 +737,7 @@ class PostPage extends StatelessComponent {
                           ),
                         ],
                       ),
-                      text('Copy'),
+                      Component.text('Copy'),
                     ],
                   ),
                 ],
@@ -762,7 +765,7 @@ class PostPage extends StatelessComponent {
                         word-wrap: normal;
                       ''',
                     },
-                    [text(codeContent)],
+                    [Component.text(codeContent)],
                   ),
                 ],
               ),
@@ -783,7 +786,7 @@ class PostPage extends StatelessComponent {
 
     // Handle paragraphs and other content
     return p(classes: 'my-4 leading-relaxed text-gray-600 dark:text-gray-400', [
-      text(_stripHtmlTags(trimmed)),
+      Component.text(_stripHtmlTags(trimmed)),
     ]);
   }
 
@@ -808,7 +811,7 @@ class PostPage extends StatelessComponent {
                   classes:
                       'px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-white',
                   [
-                    text(_stripHtmlTags(cell)),
+                    Component.text(_stripHtmlTags(cell)),
                   ]),
           ]),
         ]),
@@ -833,7 +836,7 @@ class PostPage extends StatelessComponent {
                     classes:
                         'px-4 py-2 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800',
                     [
-                      text(_stripHtmlTags(cell.group(1) ?? '')),
+                      Component.text(_stripHtmlTags(cell.group(1) ?? '')),
                     ]),
             ]),
         ]),

@@ -167,9 +167,9 @@ mixin MonitoringMixin<T extends StatefulComponent> on State<T> {
     }
   }
 
-  Future<T> trackOperation<T>(
+  Future<TResult> trackOperation<TResult>(
     String name,
-    Future<T> Function() operation,
+    Future<TResult> Function() operation,
   ) async {
     final startTime = DateTime.now();
     try {

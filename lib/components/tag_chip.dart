@@ -1,3 +1,6 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'dart:html' as html;
@@ -13,8 +16,8 @@ class TagChip extends StatelessComponent {
   });
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield a(
+  Component build(BuildContext context) {
+    return a(
       href: '/tag/$tag',
       classes: [
         'inline-flex items-center px-3 py-1 rounded-full text-sm',
@@ -32,7 +35,7 @@ class TagChip extends StatelessComponent {
         }
       },
       [
-        text('#$tag'),
+        Component.text('#$tag'),
       ],
     );
   }

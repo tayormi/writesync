@@ -82,6 +82,7 @@ class BlogPostBuilder implements build.Builder {
 // ignore_for_file: undefined_identifier, expected_identifier, invalid_reference_to_this, non_constant_identifier_names, constant_identifier_names, invalid_element_content
 
 import 'package:jaspr/jaspr.dart';
+import 'package:jaspr/dom.dart';
 import 'package:writesync/models/blog_post.dart';
 import 'package:writesync/posts/blog_post_registry.dart';
 

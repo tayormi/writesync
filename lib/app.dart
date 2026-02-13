@@ -1,4 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:html';
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:writesync/pages/search_page.dart';
 import 'package:jaspr_router/jaspr_router.dart';
@@ -58,8 +61,8 @@ class RootApp extends StatelessComponent {
   const RootApp();
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield ProviderScope(
+  Component build(BuildContext context) {
+    return ProviderScope(
       child: const App(),
     );
   }
@@ -95,33 +98,35 @@ class _AppState extends State<App> {
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     // Add base Document.head for site-wide meta tags
-    yield Document.head(
-      title: SiteConfig.siteName,
-      meta: {
-        'viewport': 'width=device-width, initial-scale=1.0',
-        ...SiteConfig.defaultMeta,
-      },
-    );
-
-    yield div(
-      classes: 'relative',
-      [
-        Router(
-          routes: routes,
-        ),
-        // Add performance dashboard with lazy loading
-        if (SiteConfig.enablePerformanceMonitoring)
-          LazyComponent(
-            loader: () async {
-              await Future.delayed(Duration(milliseconds: 300));
-              return const PerformanceDashboard();
-            },
-            placeholder: div(classes: 'hidden', []),
+    return Component.fragment([
+      Document.head(
+        title: SiteConfig.siteName,
+        meta: {
+          'viewport': 'width=device-width, initial-scale=1.0',
+          ...SiteConfig.defaultMeta,
+        },
+      ),
+  
+      div(
+        classes: 'relative',
+        [
+          Router(
+            routes: routes,
           ),
-      ],
-    );
+          // Add performance dashboard with lazy loading
+          if (SiteConfig.enablePerformanceMonitoring)
+            LazyComponent(
+              loader: () async {
+                await Future.delayed(Duration(milliseconds: 300));
+                return const PerformanceDashboard();
+              },
+              placeholder: div(classes: 'hidden', []),
+            ),
+        ],
+      ),
+    ]);
   }
 }
 

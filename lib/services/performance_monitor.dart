@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:html';
 import 'dart:js' as js;
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';

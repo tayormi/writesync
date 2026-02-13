@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'theme_wrapper.dart';
 import 'header.dart';
@@ -14,8 +15,8 @@ class Layout extends StatelessComponent {
   });
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield ThemeWrapper(
+  Component build(BuildContext context) {
+    return ThemeWrapper(
       children: [
         PageBackground(
           withGradient: withGradient,
@@ -24,7 +25,7 @@ class Layout extends StatelessComponent {
               classes: 'min-h-screen flex flex-col bg-transparent',
               [
                 Header(),
-                DomComponent(
+                Component.element(
                   tag: 'main',
                   classes: 'flex-grow w-full',
                   children: children,

@@ -1,4 +1,5 @@
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:jaspr_riverpod/legacy.dart';
 import '../services/blog_service.dart';
 
 /// Provider to manage the currently selected tag

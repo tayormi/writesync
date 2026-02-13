@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../providers/pagination_provider.dart';
@@ -15,12 +16,12 @@ class Pagination extends StatelessComponent {
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final currentPage = context.watch(currentPageProvider);
     final paginationState = context.watch(paginationProvider);
     final isDark = context.watch(isDarkProvider);
 
-    yield nav(
+    return nav(
       attributes: {'role': 'navigation', 'aria-label': 'Pagination'},
       classes: 'flex items-center justify-center space-x-2 mt-12',
       [
@@ -43,7 +44,7 @@ class Pagination extends StatelessComponent {
               }
             },
           },
-          [text('Previous')],
+          [Component.text('Previous')],
         ),
 
         // Page numbers
@@ -52,7 +53,7 @@ class Pagination extends StatelessComponent {
             // Ellipsis
             span(
               classes: 'px-4 py-2 text-gray-700 dark:text-gray-300',
-              [text('...')],
+              [Component.text('...')],
             )
           else
             button(
@@ -68,7 +69,7 @@ class Pagination extends StatelessComponent {
               events: {
                 'click': (event) => _changePage(context, page),
               },
-              [text('$page')],
+              [Component.text('$page')],
             ),
 
         // Next page button
@@ -91,7 +92,7 @@ class Pagination extends StatelessComponent {
               }
             },
           },
-          [text('Next')],
+          [Component.text('Next')],
         ),
       ],
     );

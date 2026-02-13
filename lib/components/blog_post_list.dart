@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../models/blog_post.dart';
@@ -6,16 +7,13 @@ import '../providers/theme_provider.dart';
 
 class BlogPostList extends StatelessComponent {
   final BlogPost post;
-  @override
-  final Key? key;
-
-  const BlogPostList({required this.post, this.key}) : super(key: key);
+  const BlogPostList({required this.post, super.key});
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final isDark = context.watch(isDarkProvider);
 
-    yield article(
+    return article(
       classes:
           'group bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300',
       [
@@ -49,7 +47,7 @@ class BlogPostList extends StatelessComponent {
                       span(
                         classes:
                             'px-2 py-1 text-xs font-medium ${SiteConfig.getPrimaryLightClasses(isDark: isDark)} rounded-full',
-                        [text(tag)],
+                        [Component.text(tag)],
                       ),
                   ],
                 ),
@@ -61,13 +59,13 @@ class BlogPostList extends StatelessComponent {
                   [
                     a(
                       href: '/blog/${post.slug}',
-                      [text(post.title)],
+                      [Component.text(post.title)],
                     ),
                   ],
                 ),
                 p(
                   classes: 'text-gray-600 dark:text-gray-400 mb-4 line-clamp-2',
-                  [text(post.description)],
+                  [Component.text(post.description)],
                 ),
 
                 // Metadata
@@ -90,17 +88,17 @@ class BlogPostList extends StatelessComponent {
                                 classes: 'h-6 w-6 rounded-full',
                                 attributes: {'alt': post.author},
                               ),
-                            text(post.author),
+                            Component.text(post.author),
                           ],
                         ),
                         // Date
-                        DomComponent(
+                        Component.element(
                           tag: 'time',
                           attributes: {
                             'datetime': post.publishedAt.toIso8601String()
                           },
                           children: [
-                            text(post.publishedAt
+                            Component.text(post.publishedAt
                                 .toLocal()
                                 .toString()
                                 .split(' ')[0])
@@ -113,7 +111,7 @@ class BlogPostList extends StatelessComponent {
                       href: '/blog/${post.slug}',
                       classes:
                           '${SiteConfig.getPrimaryTextClasses(isDark: isDark)} hover:underline',
-                      [text('Read more →')],
+                      [Component.text('Read more →')],
                     ),
                   ],
                 ),

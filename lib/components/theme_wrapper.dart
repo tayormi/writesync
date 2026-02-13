@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
 class ThemeWrapper extends StatelessComponent {
@@ -10,10 +11,10 @@ class ThemeWrapper extends StatelessComponent {
   });
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield Builder(
-      builder: (context) sync* {
-        yield div(
+  Component build(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        return div(
           classes:
               'bg-white text-gray-900 dark:bg-gray-900 dark:text-white ${classes ?? ''}',
           children,

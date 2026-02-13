@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../providers/layout_provider.dart';
@@ -8,11 +9,11 @@ class LayoutToggle extends StatelessComponent {
   const LayoutToggle();
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final currentLayout = context.watch(blogLayoutProvider);
     final isDark = context.watch(isDarkProvider);
 
-    yield div(
+    return div(
       classes: 'flex items-center space-x-2',
       [
         // Grid button
@@ -27,7 +28,7 @@ class LayoutToggle extends StatelessComponent {
             },
           },
           [
-            DomComponent(
+            Component.element(
               tag: 'svg',
               attributes: {
                 'viewBox': '0 0 24 24',
@@ -36,7 +37,7 @@ class LayoutToggle extends StatelessComponent {
                 'fill': 'currentColor',
               },
               children: [
-                DomComponent(
+                Component.element(
                   tag: 'path',
                   attributes: {
                     'd':
@@ -59,7 +60,7 @@ class LayoutToggle extends StatelessComponent {
             },
           },
           [
-            DomComponent(
+            Component.element(
               tag: 'svg',
               attributes: {
                 'viewBox': '0 0 24 24',
@@ -68,7 +69,7 @@ class LayoutToggle extends StatelessComponent {
                 'fill': 'currentColor',
               },
               children: [
-                DomComponent(
+                Component.element(
                   tag: 'path',
                   attributes: {
                     'd': 'M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z',

@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:markdown/markdown.dart' as md;
 import '../models/blog_post.dart';
@@ -10,8 +11,8 @@ class BlogPostComponent extends StatelessComponent {
   });
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield article(classes: 'bg-white', [
+  Component build(BuildContext context) {
+    return article(classes: 'bg-white', [
       // Hero section with image
       if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
         div(
@@ -30,10 +31,10 @@ class BlogPostComponent extends StatelessComponent {
                       classes:
                           'text-4xl font-bold tracking-tight text-white sm:text-6xl',
                       [
-                        text(post.title),
+                        Component.text(post.title),
                       ]),
                   p(classes: 'mt-6 text-lg leading-8 text-gray-300', [
-                    text(post.description),
+                    Component.text(post.description),
                   ]),
                 ]),
               ]),
@@ -46,10 +47,10 @@ class BlogPostComponent extends StatelessComponent {
                   classes:
                       'text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl',
                   [
-                    text(post.title),
+                    Component.text(post.title),
                   ]),
               p(classes: 'mt-6 text-lg leading-8 text-gray-600', [
-                text(post.description),
+                Component.text(post.description),
               ]),
             ]),
           ]),
@@ -76,18 +77,18 @@ class BlogPostComponent extends StatelessComponent {
                     div([
                       span(
                           classes: 'text-sm font-medium text-gray-900',
-                          [text(post.author)]),
+                          [Component.text(post.author)]),
                       div(
                           classes:
                               'flex items-center gap-x-4 text-sm text-gray-500',
                           [
-                            DomComponent(
+                            Component.element(
                               tag: 'time',
                               attributes: {
                                 'datetime': post.publishedAt.toIso8601String()
                               },
                               children: [
-                                text(post.publishedAt
+                                Component.text(post.publishedAt
                                     .toLocal()
                                     .toString()
                                     .split(' ')[0])
@@ -103,7 +104,7 @@ class BlogPostComponent extends StatelessComponent {
                         href: '/tags/${tag.toLowerCase()}',
                         classes:
                             'inline-flex items-center rounded-full bg-gray-50 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100',
-                        [text(tag)],
+                        [Component.text(tag)],
                       ),
                   ]),
                 ]),

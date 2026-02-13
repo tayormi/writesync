@@ -1,4 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:html';
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../components/blog_post.dart';
@@ -21,7 +24,7 @@ class _SearchPageState extends State<SearchPage> {
   String? selectedMonth;
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final blogService = context.watch(blogServiceProvider);
     final selectedTag = context.watch(selectedTagProvider);
 
@@ -44,7 +47,7 @@ class _SearchPageState extends State<SearchPage> {
       }
     }
 
-    yield Layout(children: [
+    return Layout(children: [
       div(
         classes: 'container mx-auto px-4 py-8',
         [
@@ -55,12 +58,12 @@ class _SearchPageState extends State<SearchPage> {
               h1(
                 classes:
                     'text-3xl font-bold text-gray-900 dark:text-white mb-4',
-                [text('Search Blog Posts')],
+                [Component.text('Search Blog Posts')],
               ),
               p(
                 classes: 'text-gray-600 dark:text-gray-400',
                 [
-                  text(
+                  Component.text(
                     'Search through all blog posts using keywords, tags, authors, or dates.',
                   ),
                 ],
@@ -77,7 +80,6 @@ class _SearchPageState extends State<SearchPage> {
                 classes: 'mb-6',
                 [
                   input(
-                    [],
                     classes:
                         'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white text-lg',
                     attributes: {
@@ -106,7 +108,7 @@ class _SearchPageState extends State<SearchPage> {
                   div(
                     classes: 'flex flex-col gap-2',
                     [
-                      text('Filter by Author'),
+                      Component.text('Filter by Author'),
                       select(
                         classes:
                             'px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white',
@@ -122,12 +124,12 @@ class _SearchPageState extends State<SearchPage> {
                         [
                           option(
                             attributes: {'value': 'all'},
-                            [text('All Authors')],
+                            [Component.text('All Authors')],
                           ),
                           for (final author in blogService.getAllAuthors())
                             option(
                               attributes: {'value': author},
-                              [text(author)],
+                              [Component.text(author)],
                             ),
                         ],
                       ),
@@ -138,7 +140,7 @@ class _SearchPageState extends State<SearchPage> {
                   div(
                     classes: 'flex flex-col gap-2',
                     [
-                      text('Filter by Year'),
+                      Component.text('Filter by Year'),
                       select(
                         classes:
                             'px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white',
@@ -155,12 +157,12 @@ class _SearchPageState extends State<SearchPage> {
                         [
                           option(
                             attributes: {'value': 'all'},
-                            [text('All Years')],
+                            [Component.text('All Years')],
                           ),
                           for (final year in blogService.getAllYears())
                             option(
                               attributes: {'value': year},
-                              [text(year)],
+                              [Component.text(year)],
                             ),
                         ],
                       ),
@@ -172,7 +174,7 @@ class _SearchPageState extends State<SearchPage> {
                     div(
                       classes: 'flex flex-col gap-2',
                       [
-                        text('Filter by Month'),
+                        Component.text('Filter by Month'),
                         select(
                           classes:
                               'px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white',
@@ -188,7 +190,7 @@ class _SearchPageState extends State<SearchPage> {
                           [
                             option(
                               attributes: {'value': 'all'},
-                              [text('All Months')],
+                              [Component.text('All Months')],
                             ),
                             for (final month in blogService
                                 .getAllMonths()
@@ -196,7 +198,7 @@ class _SearchPageState extends State<SearchPage> {
                               option(
                                 attributes: {'value': month.split('-')[1]},
                                 [
-                                  text(_getMonthName(
+                                  Component.text(_getMonthName(
                                     int.parse(month.split('-')[1]),
                                   )),
                                 ],
@@ -214,7 +216,7 @@ class _SearchPageState extends State<SearchPage> {
                 [
                   p(
                     classes: 'mb-2 text-gray-700 dark:text-gray-300',
-                    [text('Filter by Tags')],
+                    [Component.text('Filter by Tags')],
                   ),
                   div(
                     classes: 'flex flex-wrap gap-2',
@@ -235,7 +237,7 @@ class _SearchPageState extends State<SearchPage> {
           div(
             classes: 'mb-6 text-gray-600 dark:text-gray-400',
             [
-              text('${allPosts.length} posts found'),
+              Component.text('${allPosts.length} posts found'),
             ],
           ),
 
@@ -244,7 +246,7 @@ class _SearchPageState extends State<SearchPage> {
             div(
               classes: 'text-center py-12 text-gray-600 dark:text-gray-400',
               [
-                text('No posts found matching your criteria.'),
+                Component.text('No posts found matching your criteria.'),
               ],
             )
           else
