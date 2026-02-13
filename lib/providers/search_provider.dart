@@ -1,4 +1,5 @@
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
+import 'package:jaspr_riverpod/legacy.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 

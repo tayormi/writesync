@@ -1,4 +1,6 @@
 import 'dart:convert';
+// ignore_for_file: deprecated_member_use
+
 import 'dart:html';
 import 'package:js/js.dart';
 import 'package:yaml/yaml.dart';

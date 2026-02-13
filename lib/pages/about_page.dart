@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import '../components/layout.dart';
 import '../config/site_config.dart';
@@ -6,8 +7,8 @@ class AboutPage extends StatelessComponent {
   const AboutPage({super.key});
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield Layout(
+  Component build(BuildContext context) {
+    return Layout(
       withGradient: true,
       children: [
         // Hero section
@@ -26,14 +27,14 @@ class AboutPage extends StatelessComponent {
                         bg-clip-text text-transparent bg-gradient-to-r 
                         from-brand to-brand-dark dark:from-brand-light dark:to-brand
                       ''',
-                      [text('About ${SiteConfig.siteName}')],
+                      [Component.text('About ${SiteConfig.siteName}')],
                     ),
                     p(
                       classes: '''
                         text-xl text-gray-600 dark:text-gray-400
                         max-w-2xl mx-auto leading-relaxed
                       ''',
-                      [text(SiteConfig.siteDescription)],
+                      [Component.text(SiteConfig.siteDescription)],
                     ),
                   ],
                 ),
@@ -62,17 +63,17 @@ class AboutPage extends StatelessComponent {
                         text-gray-900 dark:text-white
                         border-b border-gray-200 dark:border-gray-700 pb-4
                       ''',
-                      [text('What is WriteSync?')],
+                      [Component.text('What is WriteSync?')],
                     ),
                     div(
                       classes: 'space-y-4 text-gray-600 dark:text-gray-300',
                       [
                         p([
-                          text(
+                          Component.text(
                               'WriteSync is a modern blog engine built with Dart and Jaspr, designed to provide a seamless writing and reading experience. It combines the performance benefits of server-side rendering with the rich interactivity of client-side applications.'),
                         ]),
                         p([
-                          text(
+                          Component.text(
                               'What sets WriteSync apart is its focus on developer experience and content management. Writers can author content in Markdown while maintaining full control over their content\'s presentation and structure.'),
                         ]),
                       ],
@@ -89,7 +90,7 @@ class AboutPage extends StatelessComponent {
                         text-3xl font-bold mb-8 text-center
                         text-gray-900 dark:text-white
                       ''',
-                      [text('Key Features')],
+                      [Component.text('Key Features')],
                     ),
                     div(
                       classes: 'grid md:grid-cols-2 gap-6',
@@ -132,7 +133,7 @@ class AboutPage extends StatelessComponent {
                         text-3xl font-bold mb-6 text-center
                         text-gray-900 dark:text-white
                       ''',
-                      [text('Technical Architecture')],
+                      [Component.text('Technical Architecture')],
                     ),
                     div(
                       classes: 'grid md:grid-cols-2 gap-6',
@@ -170,7 +171,7 @@ class AboutPage extends StatelessComponent {
                         text-3xl font-bold mb-6 text-center
                         text-gray-900 dark:text-white
                       ''',
-                      [text('For Developers')],
+                      [Component.text('For Developers')],
                     ),
                     div(
                       classes: 'grid md:grid-cols-2 gap-6',
@@ -210,19 +211,19 @@ class AboutPage extends StatelessComponent {
                     h2(
                       classes:
                           'text-3xl font-bold mb-6 text-gray-900 dark:text-white',
-                      [text('Get Started')],
+                      [Component.text('Get Started')],
                     ),
                     p(
                       classes: 'text-gray-600 dark:text-gray-300 mb-8',
                       [
-                        text('Visit our '),
+                        Component.text('Visit our '),
                         a(
                           href: '${SiteConfig.socialLinks['github']}',
                           classes:
                               'text-brand dark:text-brand-light hover:underline',
-                          [text('GitHub repository')],
+                          [Component.text('GitHub repository')],
                         ),
-                        text(
+                        Component.text(
                             ' to get started with WriteSync. The repository includes detailed documentation, setup instructions, and examples.'),
                       ],
                     ),
@@ -237,7 +238,7 @@ class AboutPage extends StatelessComponent {
                       ''',
                       [
                         // GitHub icon
-                        DomComponent(
+                        Component.element(
                           tag: 'svg',
                           classes: 'w-5 h-5 mr-2',
                           attributes: {
@@ -245,7 +246,7 @@ class AboutPage extends StatelessComponent {
                             'viewBox': '0 0 24 24',
                           },
                           children: [
-                            DomComponent(
+                            Component.element(
                               tag: 'path',
                               attributes: {
                                 'd':
@@ -254,7 +255,7 @@ class AboutPage extends StatelessComponent {
                             ),
                           ],
                         ),
-                        text('View on GitHub'),
+                        Component.text('View on GitHub'),
                       ],
                     ),
                   ],
@@ -267,11 +268,11 @@ class AboutPage extends StatelessComponent {
                     h2(
                       classes:
                           'text-3xl font-bold mb-6 text-gray-900 dark:text-white',
-                      [text('Connect')],
+                      [Component.text('Connect')],
                     ),
                     p(
                       classes: 'text-gray-600 dark:text-gray-300 mb-6',
-                      [text('Join our community and stay updated:')],
+                      [Component.text('Join our community and stay updated:')],
                     ),
                     div(
                       classes: 'flex justify-center gap-4',
@@ -286,7 +287,7 @@ class AboutPage extends StatelessComponent {
                               hover:bg-gray-200 dark:hover:bg-gray-700
                               transition-colors font-medium
                             ''',
-                            [text(entry.key)],
+                            [Component.text(entry.key)],
                           ),
                       ],
                     ),
@@ -317,7 +318,7 @@ class AboutPage extends StatelessComponent {
                 flex items-center justify-center
               ''',
               [
-                DomComponent(
+                Component.element(
                   tag: 'svg',
                   classes: 'w-6 h-6 text-brand dark:text-brand-light',
                   attributes: {
@@ -326,7 +327,7 @@ class AboutPage extends StatelessComponent {
                     'stroke': 'currentColor',
                   },
                   children: [
-                    DomComponent(
+                    Component.element(
                       tag: 'path',
                       attributes: {
                         'stroke-linecap': 'round',
@@ -341,13 +342,13 @@ class AboutPage extends StatelessComponent {
             ),
             h3(
               classes: 'text-xl font-semibold text-gray-900 dark:text-white',
-              [text(title)],
+              [Component.text(title)],
             ),
           ],
         ),
         p(
           classes: 'text-gray-600 dark:text-gray-300',
-          [text(description)],
+          [Component.text(description)],
         ),
       ],
     );
@@ -362,11 +363,11 @@ class AboutPage extends StatelessComponent {
       [
         h3(
           classes: 'text-xl font-semibold mb-3 text-gray-900 dark:text-white',
-          [text(title)],
+          [Component.text(title)],
         ),
         p(
           classes: 'text-gray-600 dark:text-gray-300',
-          [text(description)],
+          [Component.text(description)],
         ),
       ],
     );
@@ -387,7 +388,7 @@ class AboutPage extends StatelessComponent {
             flex items-center justify-center mb-4
           ''',
           [
-            DomComponent(
+            Component.element(
               tag: 'svg',
               classes: 'w-6 h-6 text-brand dark:text-brand-light',
               attributes: {
@@ -396,7 +397,7 @@ class AboutPage extends StatelessComponent {
                 'stroke': 'currentColor',
               },
               children: [
-                DomComponent(
+                Component.element(
                   tag: 'path',
                   attributes: {
                     'stroke-linecap': 'round',
@@ -411,11 +412,11 @@ class AboutPage extends StatelessComponent {
         ),
         h3(
           classes: 'text-xl font-semibold mb-2 text-gray-900 dark:text-white',
-          [text(title)],
+          [Component.text(title)],
         ),
         p(
           classes: 'text-gray-600 dark:text-gray-300',
-          [text(description)],
+          [Component.text(description)],
         ),
       ],
     );

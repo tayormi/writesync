@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import '../config/site_config.dart';
 
@@ -5,8 +6,8 @@ class Footer extends StatelessComponent {
   const Footer();
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield footer(
+  Component build(BuildContext context) {
+    return footer(
       classes:
           'bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800',
       [
@@ -24,7 +25,7 @@ class Footer extends StatelessComponent {
                     classes:
                         'text-gray-400 hover:text-gray-500 dark:hover:text-gray-300',
                     [
-                      span(classes: 'sr-only', [text(entry.key)]),
+                      span(classes: 'sr-only', [Component.text(entry.key)]),
                       _getSocialIcon(entry.key),
                     ],
                   ),
@@ -37,7 +38,7 @@ class Footer extends StatelessComponent {
                   classes:
                       'text-center text-xs leading-5 text-gray-500 dark:text-gray-400',
                   [
-                    text(SiteConfig.footerText),
+                    Component.text(SiteConfig.footerText),
                   ],
                 ),
               ],
@@ -51,7 +52,7 @@ class Footer extends StatelessComponent {
   Component _getSocialIcon(String platform) {
     switch (platform.toLowerCase()) {
       case 'twitter':
-        return DomComponent(
+        return Component.element(
           tag: 'svg',
           classes: 'h-6 w-6',
           attributes: {
@@ -59,7 +60,7 @@ class Footer extends StatelessComponent {
             'viewBox': '0 0 24 24',
           },
           children: [
-            DomComponent(
+            Component.element(
               tag: 'path',
               attributes: {
                 'd':
@@ -69,7 +70,7 @@ class Footer extends StatelessComponent {
           ],
         );
       case 'github':
-        return DomComponent(
+        return Component.element(
           tag: 'svg',
           classes: 'h-6 w-6',
           attributes: {
@@ -77,7 +78,7 @@ class Footer extends StatelessComponent {
             'viewBox': '0 0 24 24',
           },
           children: [
-            DomComponent(
+            Component.element(
               tag: 'path',
               attributes: {
                 'd':
@@ -87,7 +88,7 @@ class Footer extends StatelessComponent {
           ],
         );
       case 'linkedin':
-        return DomComponent(
+        return Component.element(
           tag: 'svg',
           classes: 'h-6 w-6',
           attributes: {
@@ -95,7 +96,7 @@ class Footer extends StatelessComponent {
             'viewBox': '0 0 24 24',
           },
           children: [
-            DomComponent(
+            Component.element(
               tag: 'path',
               attributes: {
                 'd':
@@ -105,7 +106,7 @@ class Footer extends StatelessComponent {
           ],
         );
       default:
-        return text(''); // Return empty text for unknown platforms
+        return Component.text(''); // Return empty text for unknown platforms
     }
   }
 }

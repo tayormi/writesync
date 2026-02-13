@@ -1,6 +1,6 @@
 // Generated code - do not modify by hand
 
-import 'package:jaspr/browser.dart';
+import 'package:jaspr/client.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import 'package:writesync/app.dart';
 import 'package:writesync/services/blog_service.dart';

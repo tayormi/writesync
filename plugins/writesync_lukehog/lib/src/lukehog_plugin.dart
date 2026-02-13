@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:html';
 import 'package:writesync/plugins/plugin_interface.dart';
 import 'package:nanoid2/nanoid2.dart';

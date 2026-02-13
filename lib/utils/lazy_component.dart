@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
 class LazyComponent extends StatefulComponent {
@@ -24,14 +25,14 @@ class _LazyComponentState extends State<LazyComponent> {
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield StreamBuilder<Component>(
+  Component build(BuildContext context) {
+    return StreamBuilder<Component>(
       stream: _future.asStream(),
-      builder: (context, snapshot) sync* {
+      builder: (context, snapshot) {
         if (snapshot.hasData) {
-          yield snapshot.data!;
+          return snapshot.data!;
         } else {
-          yield component.placeholder ?? _buildDefaultLoader();
+          return component.placeholder ?? _buildDefaultLoader();
         }
       },
     );
@@ -73,7 +74,7 @@ class _LazyComponentState extends State<LazyComponent> {
             text-gray-600 dark:text-gray-400
             animate-pulse
           ''',
-          [text('Loading')],
+          [Component.text('Loading')],
         ),
       ],
     );

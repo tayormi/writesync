@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../models/blog_post.dart';
@@ -13,11 +14,11 @@ class BlogList extends StatelessComponent {
   });
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final currentLayout = context.watch(blogLayoutProvider);
     final isListView = currentLayout == BlogLayout.list;
 
-    yield div(
+    return div(
       classes: 'py-16 sm:py-24',
       [
         div(
@@ -29,13 +30,13 @@ class BlogList extends StatelessComponent {
                 h2(
                   classes:
                       'text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl',
-                  [text('Latest Articles')],
+                  [Component.text('Latest Articles')],
                 ),
                 p(
                   classes:
                       'mt-2 text-lg leading-8 text-gray-600 dark:text-gray-300',
                   [
-                    text(
+                    Component.text(
                         'Stay up to date with our latest insights and developments')
                   ],
                 ),
@@ -69,8 +70,8 @@ class BlogPostListCard extends StatelessComponent {
   });
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield article(
+  Component build(BuildContext context) {
+    return article(
       classes: '''
         flex flex-row bg-white dark:bg-gray-800 rounded-lg overflow-hidden
         border border-gray-100 dark:border-gray-800
@@ -118,7 +119,7 @@ class BlogPostListCard extends StatelessComponent {
                           bg-gray-100 dark:bg-gray-700
                           text-gray-600 dark:text-gray-300
                         ''',
-                        [text('#$tag')],
+                        [Component.text('#$tag')],
                       ),
                   ],
                 ),
@@ -130,7 +131,7 @@ class BlogPostListCard extends StatelessComponent {
                     hover:text-indigo-600 dark:hover:text-indigo-400
                     line-clamp-2 mb-2
                   ''',
-                  [text(post.title)],
+                  [Component.text(post.title)],
                 ),
                 // Description
                 p(
@@ -138,7 +139,7 @@ class BlogPostListCard extends StatelessComponent {
                     text-gray-600 dark:text-gray-300
                     line-clamp-2 mb-4
                   ''',
-                  [text(post.description)],
+                  [Component.text(post.description)],
                 ),
               ],
             ),
@@ -160,12 +161,12 @@ class BlogPostListCard extends StatelessComponent {
                         font-semibold text-gray-900 dark:text-white
                         hover:text-indigo-600 dark:hover:text-indigo-400
                       ''',
-                      [text(post.author)],
+                      [Component.text(post.author)],
                     ),
                     p(
                       classes: 'text-gray-600 dark:text-gray-400',
                       [
-                        text(post.publishedAt
+                        Component.text(post.publishedAt
                             .toLocal()
                             .toString()
                             .split(' ')[0]),

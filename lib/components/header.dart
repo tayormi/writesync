@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../providers/theme_provider.dart';
@@ -30,12 +31,12 @@ class _HeaderState extends State<Header> {
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final themeMode = context.watch(themeProvider);
     final isDark = context.watch(isDarkProvider);
     final currentRoute = context.watch(currentRouteProvider);
 
-    yield header(
+    return header(
       classes:
           'sticky top-0 z-50 w-full border-b bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-800',
       [
@@ -64,7 +65,7 @@ class _HeaderState extends State<Header> {
                         // Site name - hide on mobile, show on larger screens
                         span(
                           classes: 'hidden sm:inline-block text-xl',
-                          [text(SiteConfig.siteName)],
+                          [Component.text(SiteConfig.siteName)],
                         ),
                       ],
                     ),
@@ -83,7 +84,7 @@ class _HeaderState extends State<Header> {
                                   currentRoute == item['path'],
                                   isDark,
                                 ),
-                                [text(item['label']!)],
+                                [Component.text(item['label']!)],
                               ),
                           ],
                         ),
@@ -96,7 +97,7 @@ class _HeaderState extends State<Header> {
                             'click': (event) => _toggleMobileMenu(),
                           },
                           [
-                            DomComponent(
+                            Component.element(
                               tag: 'svg',
                               classes: 'h-6 w-6',
                               attributes: {
@@ -105,7 +106,7 @@ class _HeaderState extends State<Header> {
                                 'stroke': 'currentColor',
                               },
                               children: [
-                                DomComponent(
+                                Component.element(
                                   tag: 'path',
                                   attributes: {
                                     'stroke-linecap': 'round',
@@ -136,11 +137,11 @@ class _HeaderState extends State<Header> {
                             [
                               // Show different icons based on theme
                               if (themeMode == ThemeMode.system)
-                                text('🖥️')
+                                Component.text('🖥️')
                               else if (isDark)
-                                text('🌙')
+                                Component.text('🌙')
                               else
-                                text('☀️'),
+                                Component.text('☀️'),
                             ],
                           ),
                       ],
@@ -168,7 +169,7 @@ class _HeaderState extends State<Header> {
                             events: {
                               'click': (event) => _toggleMobileMenu(),
                             },
-                            [text(item['label']!)],
+                            [Component.text(item['label']!)],
                           ),
                       ],
                     ),

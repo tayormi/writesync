@@ -1,3 +1,4 @@
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
 
@@ -12,20 +13,20 @@ class CounterState extends State<Counter> {
   int count = 0;
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield div(classes: 'counter', [
+  Component build(BuildContext context) {
+    return div(classes: 'counter', [
       button(
         onClick: () {
           setState(() => count--);
         },
-        [text('-')],
+        [Component.text('-')],
       ),
-      span([text('$count')]),
+      span([Component.text('$count')]),
       button(
         onClick: () {
           setState(() => count++);
         },
-        [text('+')],
+        [Component.text('+')],
       ),
     ]);
   }

@@ -1,4 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:html' show InputElement;
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:jaspr_riverpod/jaspr_riverpod.dart';
 import '../providers/search_provider.dart';
@@ -7,10 +10,10 @@ class SearchBar extends StatelessComponent {
   const SearchBar();
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     final searchQuery = context.watch(searchQueryProvider);
 
-    yield div(
+    return div(
       classes: 'relative w-full',
       [
         div(
@@ -25,7 +28,7 @@ class SearchBar extends StatelessComponent {
                 'aria-hidden': 'true',
               },
               [
-                DomComponent(
+                Component.element(
                   tag: 'path',
                   attributes: {
                     'fill-rule': 'evenodd',
@@ -39,7 +42,6 @@ class SearchBar extends StatelessComponent {
           ],
         ),
         input(
-          [],
           classes:
               'block w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm placeholder:text-gray-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:placeholder:text-gray-500',
           attributes: {
@@ -64,7 +66,7 @@ class SearchBar extends StatelessComponent {
               },
             },
             [
-              DomComponent(
+              Component.element(
                 tag: 'svg',
                 classes: 'h-5 w-5',
                 attributes: {
@@ -73,7 +75,7 @@ class SearchBar extends StatelessComponent {
                   'aria-hidden': 'true',
                 },
                 children: [
-                  DomComponent(
+                  Component.element(
                     tag: 'path',
                     attributes: {
                       'd':
